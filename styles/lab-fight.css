@@ -1,0 +1,540 @@
+/*
+ * CPR Sheet Skin: Fight tab (templates/lab/fight.hbs, scripts/lab/fight.js).
+ * Scoped to .app.cprlab, coloured only through the --sk-* tokens (see lab.css).
+ */
+
+.app.cprlab .cprlab-fight {
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+}
+.app.cprlab .cprlab-fight > .cprlab-toolbar {
+  margin-bottom: 0;
+}
+/* Netspace keeps the system's netrunning partials. */
+.app.cprlab .cprlab-fight .fight-tab {
+  min-height: 0;
+  height: auto;
+}
+
+/* ------------------------------------------------------- Section headers */
+
+/* One header style for Ranged, Melee, Armor and Critical Injuries. */
+.app.cprlab .cprlab-fsec-head {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  min-height: 1.6rem;
+  margin-bottom: 0.4rem;
+  padding-left: 0.5rem;
+  border-bottom: 1px solid var(--sk-line);
+  box-shadow: inset 3px 0 0 var(--sk-accent);
+}
+.app.cprlab .cprlab-fsec-title {
+  margin: 0;
+  padding: 0;
+  border: none;
+  color: var(--sk-muted);
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  line-height: 1.6rem;
+}
+.app.cprlab .cprlab-fsec-count {
+  color: var(--sk-muted);
+  font-size: 0.7rem;
+  font-variant-numeric: tabular-nums;
+  opacity: 0.8;
+}
+.app.cprlab .cprlab-fsec-actions {
+  display: flex;
+  gap: 0.1rem;
+  margin-left: auto;
+}
+.app.cprlab .cprlab-fight .cprlab-empty {
+  margin: 0;
+  padding: 0.2rem 0.5rem;
+}
+
+/* Small icon buttons (same look as the Gear tab's; repeated so this tab stands alone). */
+.app.cprlab .cprlab-fight .cprlab-act {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.45rem;
+  height: 1.45rem;
+  border-radius: var(--sk-radius);
+  color: var(--sk-muted);
+  font-size: 0.78rem;
+  cursor: pointer;
+}
+.app.cprlab .cprlab-fight .cprlab-act:hover {
+  color: var(--sk-accent);
+  background: var(--sk-panel-2);
+}
+.app.cprlab .cprlab-fight .cprlab-act.on {
+  color: var(--sk-accent);
+}
+.app.cprlab .cprlab-fight .cprlab-act.danger:hover {
+  color: var(--sk-danger);
+}
+.app.cprlab .cprlab-fight .cprlab-act.disabled {
+  opacity: 0.3;
+  cursor: default;
+}
+.app.cprlab .cprlab-fight .cprlab-act.disabled:hover {
+  background: none;
+  color: var(--sk-muted);
+}
+
+/* Small tag: "Death Save +1", effect changes, "Cyberware". */
+.app.cprlab .cprlab-ftag {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0 0.4rem;
+  border: 1px solid var(--sk-line);
+  border-radius: var(--sk-radius);
+  color: var(--sk-muted);
+  font-size: 0.7rem;
+  line-height: 1.25rem;
+  white-space: nowrap;
+}
+.app.cprlab .cprlab-ftag.warn {
+  border-color: var(--sk-warn);
+  color: var(--sk-warn);
+}
+
+/* ------------------------------------------------------------ Full cards */
+
+.app.cprlab .cprlab-fcards {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(17.5rem, 1fr));
+  gap: 0.5rem;
+}
+.app.cprlab .cprlab-fcard {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  min-width: 0;
+  padding: 0.5rem;
+  border: 1px solid var(--sk-line);
+  border-radius: var(--sk-radius);
+  background: var(--sk-panel);
+}
+.app.cprlab .cprlab-fcard + .cprlab-fcard {
+  margin-top: 0;
+}
+.app.cprlab .cprlab-fcard-head {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  min-width: 0;
+}
+.app.cprlab .cprlab-fcard-img {
+  position: relative;
+  flex: 0 0 2.6rem;
+  height: 2.6rem;
+}
+.app.cprlab .cprlab-fcard-img img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  border: none;
+  border-radius: var(--sk-radius);
+  background: var(--sk-panel-2);
+}
+.app.cprlab .cprlab-fcard-img i {
+  position: absolute;
+  right: -0.2rem;
+  top: -0.2rem;
+  color: var(--sk-accent);
+  font-size: 0.75rem;
+}
+.app.cprlab .cprlab-fcard-title {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-width: 0;
+}
+.app.cprlab .cprlab-fcard-name {
+  overflow: hidden;
+  color: var(--sk-fg);
+  font-size: 1rem;
+  font-weight: 700;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+.app.cprlab .cprlab-fcard-name:hover {
+  color: var(--sk-accent);
+}
+.app.cprlab .cprlab-fcard-sub {
+  color: var(--sk-muted);
+  font-size: 0.78rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.app.cprlab .cprlab-fcard-sub b {
+  color: var(--sk-fg);
+  font-variant-numeric: tabular-nums;
+}
+.app.cprlab .cprlab-fcard-sub em {
+  color: var(--sk-warn);
+}
+
+/* Brief description: two lines, the full text in the tooltip. */
+.app.cprlab .cprlab-fcard-desc,
+.app.cprlab .cprlab-fight p.cprlab-fcard-desc {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  margin: 0;
+  color: var(--sk-muted);
+  font-size: 0.76rem;
+  line-height: 1.3;
+}
+
+/* Stat pills (system .text-pill) with the ammo glyphs at the end. */
+.app.cprlab .cprlab-fcard-stats {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.25rem 0.35rem;
+}
+.app.cprlab .cprlab-fcard-stats .text-pill {
+  padding: 0 0.4rem;
+  border: 1px solid var(--sk-line);
+  border-radius: var(--sk-radius);
+  font-size: 0.76rem;
+  line-height: 1.3rem;
+}
+.app.cprlab .cprlab-fcard-glyphs {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.15rem;
+  margin-left: auto;
+}
+.app.cprlab .cprlab-fcard-glyphs a {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.45rem;
+  height: 1.45rem;
+  border-radius: var(--sk-radius);
+  color: var(--sk-muted);
+  font-size: 0.8rem;
+}
+.app.cprlab .cprlab-fcard-glyphs a:hover {
+  color: var(--sk-accent);
+  background: var(--sk-panel-2);
+}
+.app.cprlab .cprlab-fcard-glyphs a.button-disabled {
+  opacity: 0.35;
+}
+.app.cprlab .cprlab-fcard-glyphs a.button-active {
+  color: var(--sk-accent);
+}
+
+/* Fire modes: the system's fire-checkbox toggles, as small radio-like labels. */
+.app.cprlab .cprlab-fmodes {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.2rem 0.7rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.app.cprlab .cprlab-fmodes li {
+  list-style: none;
+}
+.app.cprlab .cprlab-fmodes a {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  color: var(--sk-muted);
+  font-size: 0.78rem;
+}
+.app.cprlab .cprlab-fmodes a:hover,
+.app.cprlab .cprlab-fmodes a[aria-checked="true"] {
+  color: var(--sk-fg);
+}
+.app.cprlab .cprlab-fmodes a[aria-checked="true"] i {
+  color: var(--sk-accent);
+}
+
+/* Big attack and damage buttons. */
+.app.cprlab .cprlab-fcard-rolls {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(0, 1fr));
+  gap: 0.35rem;
+  margin-top: auto;
+}
+.app.cprlab .cprlab-fcard-rolls a {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+  height: 2.1rem;
+  border: 1px solid var(--sk-accent);
+  border-radius: var(--sk-radius);
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+.app.cprlab .cprlab-fcard-rolls i {
+  font-size: 1rem;
+}
+.app.cprlab .cprlab-fcard-rolls .cprlab-fattack {
+  background: var(--sk-accent);
+  color: var(--sk-accent-fg);
+}
+.app.cprlab .cprlab-fcard-rolls .cprlab-fdamage,
+.app.cprlab .cprlab-fcard-rolls .cprlab-fgrenade {
+  color: var(--sk-accent);
+}
+.app.cprlab .cprlab-fcard-rolls a:hover {
+  filter: brightness(1.15);
+}
+
+/* ------------------------------------------------------------------ Armor */
+
+.app.cprlab .cprlab-fight-lower {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(19rem, 1fr));
+  gap: 0.8rem;
+  align-items: start;
+}
+.app.cprlab .cprlab-fsec-armor .cprlab-farmor + .cprlab-farmor {
+  margin-top: 0.4rem;
+}
+.app.cprlab .cprlab-farmor-locs {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.app.cprlab .cprlab-farmor-loc {
+  display: grid;
+  grid-template-columns: 3.6rem auto minmax(2rem, 1fr) auto auto;
+  align-items: center;
+  gap: 0.4rem;
+  list-style: none;
+}
+.app.cprlab .cprlab-farmor-loc .lbl {
+  color: var(--sk-muted);
+  font-size: 0.72rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+.app.cprlab .cprlab-farmor-loc .val {
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+.app.cprlab .cprlab-farmor-loc .val b {
+  font-size: 1rem;
+}
+.app.cprlab .cprlab-farmor-loc .val small {
+  color: var(--sk-muted);
+  font-size: 0.68rem;
+}
+.app.cprlab .cprlab-farmor-loc.low .val b {
+  color: var(--sk-alert);
+}
+.app.cprlab .cprlab-farmor-loc .bar {
+  display: block;
+  height: 0.3rem;
+  border-radius: 999px;
+  background: var(--sk-panel-2);
+  overflow: hidden;
+}
+.app.cprlab .cprlab-farmor-loc .bar i {
+  display: block;
+  height: 100%;
+  background: var(--sk-accent);
+}
+.app.cprlab .cprlab-farmor-loc.low .bar i {
+  background: var(--sk-alert);
+}
+
+/* ---------------------------------------------------- Critical injuries */
+
+.app.cprlab .cprlab-finjuries {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.app.cprlab .cprlab-finjury {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.3rem 0.4rem;
+  border: 1px solid var(--sk-line);
+  border-radius: var(--sk-radius);
+  background: var(--sk-panel);
+  list-style: none;
+}
+.app.cprlab .cprlab-finjury img {
+  flex: 0 0 2rem;
+  width: 2rem;
+  height: 2rem;
+  object-fit: contain;
+  border: none;
+  border-radius: var(--sk-radius);
+}
+.app.cprlab .cprlab-finjury-main {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  flex: 1;
+  min-width: 0;
+}
+.app.cprlab .cprlab-finjury-name {
+  color: var(--sk-fg);
+  font-weight: 700;
+}
+.app.cprlab .cprlab-finjury-name:hover {
+  color: var(--sk-accent);
+}
+.app.cprlab .cprlab-finjury-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem;
+}
+
+/* --------------------------------------------------------- Carry control */
+
+/* Three icon-only segments, low contrast until the card is hovered or focused. */
+.app.cprlab .cprlab-fcarry {
+  display: inline-flex;
+  flex: 0 0 auto;
+  align-self: flex-start;
+  opacity: 0.45;
+  transition: opacity 120ms;
+}
+.app.cprlab .cprlab-fcard:hover .cprlab-fcarry,
+.app.cprlab .cprlab-fghost:hover .cprlab-fcarry,
+.app.cprlab .cprlab-fcarry:focus-within {
+  opacity: 1;
+}
+.app.cprlab .cprlab-fcarry-seg {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.3rem;
+  height: 1.2rem;
+  margin-left: -1px;
+  border: 1px solid var(--sk-line);
+  color: var(--sk-muted);
+  font-size: 0.6rem;
+  cursor: pointer;
+}
+.app.cprlab .cprlab-fcarry-seg:first-child {
+  margin-left: 0;
+  border-radius: var(--sk-radius) 0 0 var(--sk-radius);
+}
+.app.cprlab .cprlab-fcarry-seg:last-child {
+  border-radius: 0 var(--sk-radius) var(--sk-radius) 0;
+}
+.app.cprlab .cprlab-fcarry-seg:hover,
+.app.cprlab .cprlab-fcarry-seg:focus-visible {
+  position: relative;
+  z-index: 1;
+  border-color: var(--sk-accent);
+  color: var(--sk-fg);
+  outline: none;
+}
+/* The active state is filled (not just coloured), so it reads without colour too. */
+.app.cprlab .cprlab-fcarry-seg.active {
+  background: var(--sk-panel-2);
+  border-color: var(--sk-muted);
+  color: var(--sk-fg);
+  cursor: default;
+}
+.app.cprlab .cprlab-fcarry-seg.active.seg-equipped {
+  background: var(--sk-accent);
+  border-color: var(--sk-accent);
+  color: var(--sk-accent-fg);
+}
+
+/* --------------------------------------------------------- Phantom cards */
+
+/* Carried and stashed weapons/armor: ghosted, smaller, after the equipped cards. */
+.app.cprlab .cprlab-fghosts {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(13.5rem, 1fr));
+  gap: 0.35rem;
+  margin-top: 0.4rem;
+}
+.app.cprlab .cprlab-fsec-armor .cprlab-fghosts {
+  grid-template-columns: repeat(auto-fill, minmax(16rem, 1fr));
+}
+.app.cprlab .cprlab-fghost {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  min-width: 0;
+  padding: 0.3rem 0.4rem;
+  border: 1px dashed var(--sk-line);
+  border-radius: var(--sk-radius);
+  background: transparent;
+  opacity: 0.7;
+  transition: opacity 120ms;
+}
+.app.cprlab .cprlab-fghost.state-owned {
+  opacity: 0.5;
+}
+.app.cprlab .cprlab-fghost:hover,
+.app.cprlab .cprlab-fghost:focus-within {
+  opacity: 1;
+}
+.app.cprlab .cprlab-fghost img {
+  flex: 0 0 1.8rem;
+  width: 1.8rem;
+  height: 1.8rem;
+  object-fit: contain;
+  border: none;
+  filter: grayscale(0.7);
+}
+.app.cprlab .cprlab-fghost-main {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-width: 0;
+}
+.app.cprlab .cprlab-fghost-name {
+  overflow: hidden;
+  color: var(--sk-fg);
+  font-size: 0.82rem;
+  font-weight: 600;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+.app.cprlab .cprlab-fghost-name:hover {
+  color: var(--sk-accent);
+}
+.app.cprlab .cprlab-fghost-meta {
+  display: flex;
+  gap: 0.5rem;
+  color: var(--sk-muted);
+  font-size: 0.7rem;
+  white-space: nowrap;
+}
+.app.cprlab .cprlab-fghost-state i {
+  font-size: 0.6rem;
+}
+.app.cprlab .cprlab-fghost-stat b {
+  color: var(--sk-fg);
+  font-variant-numeric: tabular-nums;
+}
+.app.cprlab .cprlab-fghost .cprlab-fcarry {
+  align-self: center;
+}

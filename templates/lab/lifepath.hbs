@@ -1,0 +1,28 @@
+<div class="cprlab-lifepath">
+  <div class="cprlab-story">
+    <div class="cprlab-story-groups">
+      {{#each lab.lifepath as |cards group|}}
+        <section class="cprlab-story-group">
+          <h3>
+            <span>{{localize (concat "CPRSKIN.lab.lifepath." group)}}</span>
+            {{#if @first}}<a class="cprlab-pill set-lifepath" data-item-prop="set-lifepath"><i class="fas fa-wrench"></i> {{localize "CPRSKIN.lab.lifepath.edit"}}</a>{{/if}}
+          </h3>
+          <div class="cprlab-story-cards">
+            {{#each cards as |card|}}
+              <div class="cprlab-story-card {{#if card.empty}}empty{{/if}}">
+                <label>{{card.label}}</label>
+                <div class="cprlab-story-value">{{#if card.empty}}—{{else}}{{{card.html}}}{{/if}}</div>
+              </div>
+            {{/each}}
+          </div>
+        </section>
+      {{/each}}
+    </div>
+    <section class="cprlab-notes">
+      <h3>{{localize "CPR.characterSheet.bottomPane.lifepath.playerNotes"}}</h3>
+      <div class="note-pad">
+        {{editor enrichedHTML.systemInformationNotes target="system.information.notes" button=true owner=owner editable=editable engine="prosemirror"}}
+      </div>
+    </section>
+  </div>
+</div>

@@ -1,0 +1,1542 @@
+/*
+ * CPR Sheet Skin: the character sheet
+ *
+ * Everything is scoped to .app.cprlab (the sheet's window class; the cprlab-
+ * prefix is historical) and coloured only through the --sk-* tokens, which
+ * the HQ Console and Gold Standard themes in skin.css set. This file is
+ * imported first by skin.css.
+ */
+
+.app.cprlab {
+  --sk-radius: 4px;
+}
+
+.app.cprlab .window-content {
+  padding: 0;
+  background: var(--sk-bg);
+  color: var(--sk-fg);
+}
+.app.cprlab .cprlab-sheet {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  min-height: 0;
+}
+.app.cprlab input[type="text"],
+.app.cprlab input[type="number"] {
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: var(--sk-radius);
+  color: var(--sk-fg);
+  box-shadow: none;
+}
+.app.cprlab input[type="text"]:hover,
+.app.cprlab input[type="number"]:hover,
+.app.cprlab input[type="text"]:focus,
+.app.cprlab input[type="number"]:focus {
+  border-color: var(--sk-line);
+  background: var(--sk-panel-2);
+  box-shadow: none;
+}
+.app.cprlab a:hover {
+  text-shadow: none;
+}
+.app.cprlab .cprlab-empty {
+  color: var(--sk-muted);
+  font-style: italic;
+  padding: 0.5rem;
+}
+
+/* ------------------------------------------------------------------ Header */
+
+.app.cprlab .cprlab-header {
+  display: grid;
+  /* The portrait grows with the window, from 6.5rem up to 10rem. */
+  grid-template-columns: clamp(6.5rem, 11%, 10rem) minmax(11rem, 1fr) minmax(15rem, 1.15fr) minmax(19rem, 1.35fr);
+  gap: 0.6rem;
+  padding: 0.6rem;
+  background: var(--sk-panel);
+  border-bottom: 1px solid var(--sk-line);
+  align-items: stretch;
+}
+.app.cprlab .cprlab-portrait {
+  position: relative;
+}
+.app.cprlab .cprlab-portrait img {
+  display: block;
+  width: 100%;
+  height: auto;
+  min-height: 100%;
+  max-height: 10rem;
+  aspect-ratio: 1;
+  object-fit: cover;
+  object-position: top;
+  border: 1px solid var(--sk-line);
+  border-radius: var(--sk-radius);
+  background: var(--sk-panel-2);
+}
+.app.cprlab .cprlab-portrait img[data-lab-portrait] {
+  cursor: pointer;
+}
+.app.cprlab .cprlab-portrait .overlay {
+  position: absolute;
+  left: 0.3rem;
+  bottom: 0.3rem;
+  color: var(--sk-accent);
+}
+.app.cprlab .cprlab-identity {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  min-width: 0;
+}
+.app.cprlab .cprlab-name {
+  font-family: var(--cpr-font-hero, inherit);
+  font-size: 1.55rem;
+  height: 2.2rem;
+  font-weight: 700;
+}
+.app.cprlab input.cprlab-roles-line {
+  width: 100%;
+  height: 1.4rem;
+  padding: 0 0.15rem;
+  color: var(--sk-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-size: 0.85rem;
+}
+.app.cprlab .cprlab-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.3rem;
+  margin-top: auto;
+}
+.app.cprlab .cprlab-chip {
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+  padding: 0.1rem 0.45rem;
+  border: 1px solid var(--sk-line);
+  border-radius: var(--sk-radius);
+  background: var(--sk-panel-2);
+  font-size: 0.85rem;
+}
+.app.cprlab .cprlab-chip label {
+  color: var(--sk-muted);
+  text-transform: uppercase;
+  font-size: 0.68rem;
+  letter-spacing: 0.08em;
+}
+.app.cprlab .cprlab-chip span {
+  font-weight: 700;
+}
+.app.cprlab .cprlab-chip a {
+  color: var(--sk-muted);
+}
+.app.cprlab .cprlab-chip a:hover {
+  color: var(--sk-accent);
+}
+/* Theme switch right of the Eurobucks chip: hidden until it or the chip is hovered or focused. */
+.app.cprlab .cprlab-theme-switch {
+  align-self: center;
+  padding: 0 0.2rem;
+  font-size: 0.75rem;
+  color: var(--sk-muted);
+  opacity: 0;
+  transition: opacity 0.15s;
+}
+.app.cprlab .cprlab-chip:hover + .cprlab-theme-switch,
+.app.cprlab .cprlab-theme-switch:hover,
+.app.cprlab .cprlab-theme-switch:focus-visible {
+  opacity: 1;
+  color: var(--sk-accent);
+}
+
+/* Vitals: big HP and Humanity with bars, then Death Save and wound state. */
+.app.cprlab .cprlab-vitals {
+  display: grid;
+  grid-template-columns: 1fr 1fr 2.6rem;
+  grid-template-rows: auto auto;
+  gap: 0.4rem;
+}
+.app.cprlab .cprlab-vital {
+  container-type: inline-size;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 0.25rem 0.45rem;
+  border: 1px solid var(--sk-line);
+  border-radius: var(--sk-radius);
+  background: var(--sk-panel-2);
+  min-width: 0;
+}
+.app.cprlab .cprlab-vital-label {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: var(--sk-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  font-size: 0.68rem;
+}
+.app.cprlab a.cprlab-vital-label:hover {
+  color: var(--sk-accent);
+}
+.app.cprlab .cprlab-vital-values {
+  display: flex;
+  align-items: center;
+  gap: 0.2rem;
+}
+/* Values shrink with the card (container units), so narrow windows never clip them. */
+.app.cprlab .cprlab-vital-values input {
+  flex: none;
+  width: 1.9em;
+  height: auto;
+  font-size: clamp(0.95rem, 19cqi, 1.5rem);
+  font-weight: 700;
+  text-align: center;
+  padding: 0;
+}
+.app.cprlab .cprlab-vital-values span + input {
+  font-size: clamp(0.75rem, 12cqi, 1rem);
+  width: 2.4em;
+  color: var(--sk-muted);
+}
+.app.cprlab .cprlab-vital.hp .cprlab-vital-values input:first-of-type {
+  color: var(--sk-danger);
+}
+.app.cprlab .cprlab-vital.humanity .cprlab-vital-values input:first-of-type {
+  color: var(--sk-good);
+}
+.app.cprlab .cprlab-vital.small .cprlab-vital-values {
+  gap: 0.6rem;
+  font-size: 1.1rem;
+}
+/* Compact vitals: HP and Humanity, then one status line for wound state and Death Save. */
+.app.cprlab .cprlab-vitals.compact {
+  grid-template-rows: 1fr auto;
+}
+.app.cprlab .cprlab-status {
+  grid-column: 1 / -1;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.15rem 0.45rem;
+  border: 1px solid var(--sk-line);
+  border-left: 3px solid var(--sk-good);
+  border-radius: var(--sk-radius);
+  background: var(--sk-panel-2);
+  font-size: 0.8rem;
+  container-type: inline-size;
+}
+.app.cprlab .cprlab-wound {
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  white-space: nowrap;
+  font-weight: 600;
+}
+.app.cprlab .cprlab-wound > span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.app.cprlab .cprlab-ds {
+  flex: none;
+}
+/* Narrow status line: the Death Save keeps its dice icon, the word goes (it's in the tooltip). */
+@container (max-width: 17rem) {
+  .app.cprlab .cprlab-ds-roll span { display: none; }
+}
+.app.cprlab .cprlab-wound img {
+  border: none;
+  flex: none;
+}
+.app.cprlab .cprlab-status.wound-lightlyWounded {
+  border-left-color: var(--sk-accent-2);
+}
+.app.cprlab .cprlab-status.wound-seriouslyWounded {
+  border-left-color: var(--sk-accent);
+}
+.app.cprlab .cprlab-status.wound-mortallyWounded {
+  border-left-color: var(--sk-danger);
+  background: color-mix(in srgb, var(--sk-danger) 18%, var(--sk-panel-2));
+}
+.app.cprlab .cprlab-ds {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  color: var(--sk-muted);
+}
+.app.cprlab .cprlab-ds strong {
+  color: var(--sk-fg);
+  font-size: 0.95rem;
+}
+.app.cprlab .cprlab-ds a {
+  color: var(--sk-muted);
+}
+.app.cprlab .cprlab-ds a:hover {
+  color: var(--sk-accent);
+}
+.app.cprlab .cprlab-ds-roll {
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  font-size: 0.68rem;
+  font-weight: 700;
+}
+/* Mortally wounded: the Death Save is what matters now. */
+.app.cprlab .wound-mortallyWounded .cprlab-ds-roll {
+  padding: 0.05rem 0.4rem;
+  border-radius: var(--sk-radius);
+  background: var(--sk-danger);
+  color: var(--sk-accent-fg);
+}
+
+.app.cprlab .cprlab-bar {
+  height: 5px;
+  border-radius: 3px;
+  background: var(--sk-line);
+  overflow: hidden;
+}
+.app.cprlab .cprlab-bar > div {
+  height: 100%;
+  background: var(--sk-danger);
+}
+.app.cprlab .cprlab-vital.humanity .cprlab-bar > div {
+  background: var(--sk-good);
+}
+
+/* Label row with a quiet action button (heal / therapy) that shows on hover. */
+.app.cprlab .cprlab-vital-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.3rem;
+}
+.app.cprlab .cprlab-vital-act {
+  color: var(--sk-muted);
+  font-size: 0.75rem;
+  opacity: 0.3;
+  transition: opacity 120ms;
+}
+.app.cprlab .cprlab-vital:hover .cprlab-vital-act,
+.app.cprlab .cprlab-vital-act:focus-visible {
+  opacity: 1;
+}
+.app.cprlab .cprlab-vital-act:hover {
+  color: var(--sk-accent);
+}
+
+/* Hidden +1/-1 spinner (stacked carets) right of the current HP / Humanity, shown on hover. */
+.app.cprlab .cprlab-vital-steps {
+  display: flex;
+  flex: none;
+  flex-direction: column;
+  width: 0.65rem;
+  margin-left: -0.15rem;
+  opacity: 0;
+  transition: opacity 120ms;
+}
+.app.cprlab .cprlab-vital:hover .cprlab-vital-steps,
+.app.cprlab .cprlab-vital-steps:focus-within {
+  opacity: 1;
+}
+.app.cprlab .cprlab-vital-step {
+  color: var(--sk-muted);
+  font-size: 0.75rem;
+  line-height: 0.75rem;
+  text-align: center;
+}
+.app.cprlab .cprlab-vital-step:hover {
+  color: var(--sk-accent);
+}
+
+/* Humanity colour follows the EMP it works out to (see _labHumanityState). */
+.app.cprlab .cprlab-vitals.humanity-warn { --cprlab-hum: var(--sk-warn); }
+.app.cprlab .cprlab-vitals.humanity-danger { --cprlab-hum: var(--sk-alert); }
+.app.cprlab .cprlab-vitals.humanity-psycho,
+.app.cprlab .cprlab-vitals.humanity-extreme { --cprlab-hum: var(--sk-danger); }
+.app.cprlab .cprlab-vital[class*="humanity-"]:not(.humanity-ok) .cprlab-vital-values input:first-of-type {
+  color: var(--cprlab-hum);
+}
+.app.cprlab .cprlab-vital[class*="humanity-"]:not(.humanity-ok) .cprlab-bar > div {
+  background: var(--cprlab-hum);
+}
+.app.cprlab .cprlab-vital.humanity-psycho,
+.app.cprlab .cprlab-vital.humanity-extreme {
+  border-color: color-mix(in srgb, var(--sk-danger) 60%, var(--sk-line));
+}
+.app.cprlab .cprlab-vital.humanity-psycho .cprlab-vital-values input:first-of-type,
+.app.cprlab .cprlab-vital.humanity-psycho .cprlab-bar > div {
+  animation: cprlab-psycho 2.4s ease-in-out infinite;
+}
+.app.cprlab .cprlab-vital.humanity-extreme .cprlab-vital-values input:first-of-type,
+.app.cprlab .cprlab-vital.humanity-extreme .cprlab-bar > div {
+  animation: cprlab-psycho 1.2s ease-in-out infinite;
+}
+/*
+ * EMP 2 or below: a slim full-width warning strip between the HP/Humanity
+ * cards and the status line. The cards give up the height it takes.
+ */
+.app.cprlab .cprlab-vitals.has-note,
+.app.cprlab .cprlab-vitals.compact.has-note {
+  grid-template-rows: minmax(0, 1fr) auto auto;
+}
+.app.cprlab .cprlab-vitals.has-note .cprlab-vital {
+  padding-top: 0.15rem;
+  padding-bottom: 0.2rem;
+}
+.app.cprlab .cprlab-humanity-note {
+  grid-column: 1 / -1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.35rem;
+  min-width: 0;
+  padding: 0.1rem 0.45rem;
+  border: 1px solid color-mix(in srgb, var(--cprlab-hum) 45%, var(--sk-line));
+  border-radius: var(--sk-radius);
+  background: color-mix(in srgb, var(--cprlab-hum) 14%, var(--sk-panel-2));
+  color: var(--cprlab-hum);
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+.app.cprlab .cprlab-humanity-note span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.app.cprlab .cprlab-vitals.humanity-extreme .cprlab-humanity-note {
+  animation: cprlab-psycho 1.2s ease-in-out infinite;
+}
+
+@keyframes cprlab-psycho {
+  50% { opacity: 0.45; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .app.cprlab .cprlab-vitals[class*="humanity-"] * { animation: none !important; }
+}
+
+/* Armor SP: a thin column, helmet on top, body below. */
+.app.cprlab .cprlab-sp {
+  grid-column: 3;
+  grid-row: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.15rem;
+  padding: 0.2rem 0;
+  border: 1px solid var(--sk-line);
+  border-radius: var(--sk-radius);
+  background: var(--sk-panel-2);
+  min-width: 0;
+}
+.app.cprlab .cprlab-sp-label {
+  color: var(--sk-muted);
+  font-size: 0.62rem;
+  letter-spacing: 0.1em;
+}
+.app.cprlab .cprlab-sp-loc {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  line-height: 1.05;
+}
+.app.cprlab .cprlab-sp-loc i {
+  color: var(--sk-muted);
+  font-size: 0.68rem;
+}
+.app.cprlab .cprlab-sp-loc b {
+  font-size: 1.05rem;
+}
+.app.cprlab .cprlab-sp-loc.low b {
+  color: var(--sk-warn);
+}
+/* Each SP number is a button: click to ablate that location by 1. */
+.app.cprlab a.cprlab-sp-loc {
+  padding: 0 0.15rem;
+  border-radius: var(--sk-radius);
+  color: var(--sk-fg);
+  cursor: pointer;
+}
+.app.cprlab a.cprlab-sp-loc.low {
+  color: var(--sk-warn);
+}
+.app.cprlab a.cprlab-sp-loc:hover,
+.app.cprlab a.cprlab-sp-loc:focus-visible {
+  background: color-mix(in srgb, var(--sk-danger) 22%, transparent);
+}
+.app.cprlab a.cprlab-sp-loc:hover b,
+.app.cprlab a.cprlab-sp-loc:hover i {
+  color: var(--sk-danger);
+}
+.app.cprlab .cprlab-sp-loc.none {
+  color: var(--sk-muted);
+}
+
+/* Stats: Demiplane-style tiles, big value over a label bar. Click the label to roll. */
+.app.cprlab .cprlab-stats {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 0.3rem;
+}
+.app.cprlab .cprlab-stat {
+  display: flex;
+  flex-direction: column;
+  border: 1px solid var(--sk-line);
+  border-radius: var(--sk-radius);
+  background: var(--sk-panel-2);
+  overflow: hidden;
+}
+.app.cprlab .cprlab-stat-value {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: 1;
+}
+.app.cprlab .cprlab-stat-value input {
+  width: 100%;
+  height: auto;
+  padding: 0;
+  text-align: center;
+  font-size: 1.35rem;
+  font-weight: 700;
+  color: var(--sk-accent);
+}
+.app.cprlab .cprlab-stat-value.of input {
+  width: 1.8rem;
+}
+.app.cprlab .cprlab-stat-value.of input + span + input {
+  font-size: 0.9rem;
+  color: var(--sk-muted);
+}
+.app.cprlab .cprlab-stat-label {
+  display: block;
+  text-align: center;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  padding: 0.05rem 0;
+  background: var(--sk-accent);
+  color: var(--sk-accent-fg);
+}
+.app.cprlab .cprlab-stat-label:hover {
+  filter: brightness(1.15);
+}
+
+/* -------------------------------------------------------------------- Tabs */
+
+.app.cprlab .cprlab-tabs {
+  display: flex;
+  align-items: stretch;
+  gap: 0.1rem;
+  padding: 0 0.5rem;
+  background: var(--sk-panel);
+  border-bottom: 1px solid var(--sk-line);
+  flex: 0 0 auto;
+}
+.app.cprlab .cprlab-tab {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.45rem 0.7rem;
+  border-bottom: 2px solid transparent;
+  color: var(--sk-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-size: 0.8rem;
+  font-weight: 600;
+  white-space: nowrap;
+}
+.app.cprlab .cprlab-tab:hover {
+  color: var(--sk-fg);
+}
+.app.cprlab .cprlab-tab.active {
+  color: var(--sk-accent);
+  border-bottom-color: var(--sk-accent);
+}
+.app.cprlab .cprlab-filter {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+  color: var(--sk-muted);
+}
+.app.cprlab .cprlab-filter input {
+  width: 11rem;
+  height: 1.6rem;
+  border-color: var(--sk-line);
+}
+
+/* -------------------------------------------------------- Body and dock */
+
+.app.cprlab .cprlab-main {
+  display: flex;
+  flex: 1;
+  min-height: 0;
+}
+.app.cprlab .cprlab-body {
+  flex: 1;
+  min-width: 0;
+  overflow-y: auto;
+  padding: 0.6rem;
+}
+.app.cprlab .cprlab-dock {
+  flex: 0 0 15.5rem;
+  overflow-y: auto;
+  padding: 0.6rem;
+  border-left: 1px solid var(--sk-line);
+  background: var(--sk-panel);
+}
+.app.cprlab .cprlab-system-tab {
+  background: var(--sk-panel);
+  border: 1px solid var(--sk-line);
+  border-radius: var(--sk-radius);
+}
+/* The system's tables: give headers and rows the same inner padding, so the
+   header text clears the row highlights and the columns still line up. */
+.app.cprlab .cprlab-system-tab .items-header,
+.app.cprlab .cprlab-system-tab li.item {
+  padding-left: 0.6rem;
+  padding-right: 0.6rem;
+}
+/* Section names that carry the HQ theme's left rule themselves. */
+.app.cprlab .cprlab-system-tab .section-name {
+  padding-left: 0.6rem !important;
+}
+
+/* Active effects bar, between the header and the tabs. */
+.app.cprlab .cprlab-effects-bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.3rem;
+  padding: 0.3rem 0.6rem;
+  background: var(--sk-panel-2);
+  border-bottom: 1px solid var(--sk-line);
+  flex: 0 0 auto;
+}
+.app.cprlab .cprlab-effects-label {
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+  margin-right: 0.2rem;
+  color: var(--sk-accent);
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+.app.cprlab .cprlab-effect-chip {
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+  max-width: 14rem;
+  padding: 0.05rem 0.5rem 0.05rem 0.15rem;
+  border: 1px solid var(--sk-line);
+  border-radius: 999px;
+  background: var(--sk-panel);
+  font-size: 0.75rem;
+}
+.app.cprlab .cprlab-effect-chip img {
+  width: 1.1rem;
+  height: 1.1rem;
+  border: none;
+  border-radius: 50%;
+  flex: none;
+}
+.app.cprlab .cprlab-effect-chip span {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.app.cprlab .cprlab-effect-chip:hover {
+  border-color: var(--sk-accent);
+}
+.app.cprlab .cprlab-effects-count {
+  display: none;
+  padding: 0 0.35rem;
+  border-radius: 999px;
+  background: var(--sk-accent);
+  color: var(--sk-accent-fg);
+  letter-spacing: 0;
+}
+.app.cprlab .cprlab-effects-toggle {
+  margin-left: auto;
+}
+.app.cprlab .cprlab-effects-toggle i {
+  transition: transform 120ms;
+}
+/* Hidden: only the label (with a count) and the handle stay, on a thinner bar. */
+.app.cprlab .cprlab-effects-bar.collapsed {
+  padding-block: 0.1rem;
+}
+.app.cprlab .cprlab-effects-bar.collapsed .cprlab-effect-chip {
+  display: none;
+}
+.app.cprlab .cprlab-effects-bar.collapsed .cprlab-effects-count {
+  display: inline-block;
+}
+.app.cprlab .cprlab-effects-bar.collapsed .cprlab-effects-toggle i {
+  transform: rotate(180deg);
+}
+
+/* Critical injuries without an effect: same chip, tinted as a wound. */
+.app.cprlab .cprlab-effect-chip.injury {
+  border-color: color-mix(in srgb, var(--sk-danger) 55%, var(--sk-line));
+  background: color-mix(in srgb, var(--sk-danger) 12%, var(--sk-panel));
+}
+
+/* Effects tab: on/off switch (the system's toggle control) and the Active bar eye. */
+.app.cprlab .cprlab-effects-list .effect-actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 0.45rem;
+}
+.app.cprlab .cprlab-switch {
+  position: relative;
+  flex: none;
+  width: 1.9rem;
+  height: 1rem;
+  border: 1px solid var(--sk-line);
+  border-radius: 999px;
+  background: var(--sk-panel-2);
+  transition: background 120ms, border-color 120ms;
+}
+.app.cprlab .cprlab-switch .knob {
+  position: absolute;
+  top: 1px;
+  left: 1px;
+  width: calc(1rem - 4px);
+  height: calc(1rem - 4px);
+  border-radius: 50%;
+  background: var(--sk-muted);
+  transition: transform 120ms, background 120ms;
+}
+.app.cprlab .cprlab-switch.on {
+  border-color: var(--sk-accent);
+  background: color-mix(in srgb, var(--sk-accent) 35%, var(--sk-panel-2));
+}
+.app.cprlab .cprlab-switch.on .knob {
+  transform: translateX(0.9rem);
+  background: var(--sk-accent);
+}
+.app.cprlab .cprlab-switch:focus-visible {
+  outline: 2px solid var(--sk-accent);
+  outline-offset: 1px;
+}
+@media (prefers-reduced-motion: reduce) {
+  .app.cprlab .cprlab-switch, .app.cprlab .cprlab-switch .knob { transition: none; }
+}
+.app.cprlab .cprlab-effect-bar-toggle {
+  color: var(--sk-fg);
+}
+.app.cprlab .cprlab-effect-bar-toggle.off {
+  color: var(--sk-muted);
+  opacity: 0.6;
+}
+.app.cprlab .cprlab-effect-bar-toggle:hover {
+  color: var(--sk-accent);
+  opacity: 1;
+}
+.app.cprlab .cprlab-effects-list .cprlab-effect-off .effect-name {
+  opacity: 0.55;
+}
+.app.cprlab .cprlab-injury-text {
+  color: var(--sk-muted);
+  font-size: 0.8rem;
+}
+
+/* Toolbar of quick switches above each lab tab. */
+.app.cprlab .cprlab-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.3rem;
+  margin-bottom: 0.6rem;
+}
+.app.cprlab .cprlab-toolbar-label {
+  color: var(--sk-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-size: 0.68rem;
+  margin-left: 0.4rem;
+}
+.app.cprlab .cprlab-toolbar-label:first-child {
+  margin-left: 0;
+}
+.app.cprlab .cprlab-roles-view {
+  margin: 0.6rem 0 0;
+}
+.app.cprlab .cprlab-spacer {
+  flex: 1;
+}
+.app.cprlab .cprlab-pill {
+  padding: 0.1rem 0.6rem;
+  border: 1px solid var(--sk-line);
+  border-radius: 999px;
+  font-size: 0.78rem;
+  color: var(--sk-fg);
+  background: var(--sk-panel);
+  cursor: pointer;
+}
+.app.cprlab .cprlab-pill:hover {
+  border-color: var(--sk-accent);
+}
+.app.cprlab .cprlab-pill.active {
+  background: var(--sk-accent);
+  border-color: var(--sk-accent);
+  color: var(--sk-accent-fg);
+}
+.app.cprlab span.cprlab-pill.active {
+  cursor: default;
+}
+
+/* ------------------------------------------------------------------ Skills */
+
+.app.cprlab .cprlab-skill-groups {
+  column-width: 22rem;
+  column-gap: 0.9rem;
+}
+.app.cprlab .cprlab-skill-group {
+  break-inside: avoid;
+  margin-bottom: 0.7rem;
+}
+.app.cprlab .cprlab-group-title {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  margin: 0 0 0.3rem;
+  padding: 0 0 0.15rem;
+  border: none;
+  border-bottom: 1px solid var(--sk-line);
+  color: var(--sk-muted);
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  cursor: pointer;
+  font-family: inherit;
+}
+.app.cprlab .cprlab-group-title .fa-chevron-down {
+  transition: transform 120ms;
+  font-size: 0.65rem;
+}
+.app.cprlab .cprlab-skill-group.collapsed .fa-chevron-down {
+  transform: rotate(-90deg);
+}
+.app.cprlab .cprlab-skill-group.collapsed .cprlab-skill-list {
+  display: none;
+}
+.app.cprlab .cprlab-skill-group.pinned .cprlab-group-title {
+  color: var(--sk-accent);
+}
+.app.cprlab .cprlab-count {
+  margin-left: auto;
+  font-weight: 400;
+}
+.app.cprlab .cprlab-skill-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.app.cprlab .cprlab-skill {
+  position: relative;
+}
+.app.cprlab .sk-stat {
+  color: var(--sk-muted);
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+.app.cprlab .sk-tools {
+  display: flex;
+  gap: 0.3rem;
+  align-items: center;
+  color: var(--sk-muted);
+  font-size: 0.75rem;
+}
+.app.cprlab .sk-tools a:hover {
+  color: var(--sk-accent);
+}
+.app.cprlab .sk-pin {
+  opacity: 0;
+  transition: opacity 100ms;
+}
+.app.cprlab .cprlab-skill:hover .sk-pin,
+.app.cprlab .cprlab-skill.favorite .sk-pin {
+  opacity: 1;
+}
+.app.cprlab .cprlab-skill.favorite .sk-pin {
+  color: var(--sk-accent);
+}
+/* The "no skills match" line (the views set display on their elements). */
+.app.cprlab .cprlab-skills [hidden] {
+  display: none !important;
+}
+
+.app.cprlab .skill-input {
+  width: 2rem;
+  height: 1.5rem;
+  text-align: center;
+  padding: 0;
+}
+
+/* Dice view: Demiplane-style rows with a fat roll button showing the total. */
+.app.cprlab .view-dice .cprlab-skill {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto 4.4rem 1rem;
+  align-items: center;
+  gap: 0.45rem;
+  margin-bottom: 0.3rem;
+  padding: 0.2rem 0.25rem 0.2rem 0.55rem;
+  border: 1px solid var(--sk-line);
+  border-radius: var(--sk-radius);
+  background: var(--sk-panel);
+}
+.app.cprlab .view-dice .sk-main {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  line-height: 1.15;
+}
+.app.cprlab .view-dice .sk-name {
+  font-weight: 700;
+  font-size: 0.95rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.app.cprlab .view-dice .untrained .sk-name {
+  font-weight: 500;
+  color: var(--sk-muted);
+}
+.app.cprlab .view-dice .sk-level {
+  display: flex;
+  align-items: center;
+  gap: 0.1rem;
+  color: var(--sk-muted);
+}
+.app.cprlab .view-dice .sk-step {
+  font-size: 0.6rem;
+  opacity: 0;
+  padding: 0 0.15rem;
+}
+.app.cprlab .view-dice .cprlab-skill:hover .sk-step {
+  opacity: 1;
+}
+.app.cprlab .view-dice .sk-step:hover {
+  color: var(--sk-accent);
+}
+.app.cprlab .sk-dice {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.35rem;
+  height: 2.15rem;
+  border-radius: var(--sk-radius);
+  background: var(--sk-accent);
+  color: var(--sk-accent-fg);
+  font-size: 1.15rem;
+  font-weight: 700;
+}
+.app.cprlab .sk-dice i {
+  font-size: 0.85rem;
+  opacity: 0.8;
+}
+.app.cprlab .sk-dice:hover {
+  filter: brightness(1.12);
+  color: var(--sk-accent-fg);
+}
+/* Situational modifier available (roll-dialog checkbox): a folded corner, top right. */
+.app.cprlab .sk-dice.situational,
+.app.cprlab .sk-mod.situational,
+.app.cprlab .ab-mod.situational {
+  position: relative;
+  overflow: hidden;
+}
+.app.cprlab .sk-mod.situational,
+.app.cprlab .ab-mod.situational {
+  display: inline-block;
+  padding-right: 0.5rem;
+}
+.app.cprlab .sk-dice.situational::before,
+.app.cprlab .sk-mod.situational::before,
+.app.cprlab .ab-mod.situational::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 0.55rem;
+  height: 0.55rem;
+  background: var(--sk-accent);
+  clip-path: polygon(0 0, 100% 0, 100% 100%);
+}
+/* On the accent-coloured dice button: a light fold with a dark edge, readable in every theme. */
+.app.cprlab .sk-dice.situational::before {
+  width: 0.95rem;
+  height: 0.95rem;
+  background: var(--sk-accent-fg);
+}
+.app.cprlab .sk-dice.situational::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 0.75rem;
+  height: 0.75rem;
+  background: var(--sk-fg);
+  clip-path: polygon(0 0, 100% 0, 100% 100%);
+}
+.app.cprlab .view-dice .sk-tools {
+  flex-direction: column;
+  gap: 0.2rem;
+}
+
+/* Table view: dense, one line per skill. */
+.app.cprlab .view-table .cprlab-skill-groups {
+  column-width: 20rem;
+}
+.app.cprlab .view-table .cprlab-skill {
+  display: grid;
+  grid-template-columns: 3rem minmax(0, 1fr) 2rem 1.6rem 2rem 2.4rem;
+  align-items: center;
+  gap: 0.3rem;
+  padding: 0.05rem 0.3rem;
+  border-bottom: 1px solid var(--sk-line);
+}
+.app.cprlab .view-table .cprlab-skill:nth-child(even) {
+  background: var(--sk-row-alt);
+}
+.app.cprlab .view-table .sk-stat {
+  background: var(--sk-pill-bg);
+  color: var(--sk-pill-fg);
+  border-radius: 3px;
+  text-align: center;
+  font-size: 0.62rem;
+  padding: 0.05rem 0;
+}
+.app.cprlab .view-table .sk-name {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.app.cprlab .view-table .sk-mod {
+  text-align: center;
+  color: var(--sk-muted);
+  font-size: 0.8rem;
+}
+.app.cprlab .view-table .sk-base {
+  text-align: center;
+  font-weight: 700;
+  color: var(--sk-accent);
+}
+.app.cprlab .view-table .sk-tools {
+  justify-content: flex-end;
+}
+
+/* -------------------------------------------------------------------- Role */
+
+.app.cprlab .cprlab-role-card {
+  margin-bottom: 0.8rem;
+  border: 1px solid var(--sk-line);
+  border-radius: var(--sk-radius);
+  background: var(--sk-panel);
+  overflow: hidden;
+}
+.app.cprlab .cprlab-role-head {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.4rem 0.6rem;
+  background: var(--sk-header-bg);
+  color: var(--sk-header-fg);
+}
+.app.cprlab .cprlab-role-head img {
+  width: 2.2rem;
+  height: 2.2rem;
+  border: none;
+  border-radius: var(--sk-radius);
+}
+.app.cprlab .cprlab-role-title {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+.app.cprlab .cprlab-role-title .item-edit {
+  font-size: 1.25rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--sk-header-fg);
+}
+.app.cprlab .cprlab-tag {
+  font-size: 0.65rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  padding: 0.05rem 0.4rem;
+  border-radius: 999px;
+  border: 1px solid var(--sk-line);
+  color: var(--sk-muted);
+}
+.app.cprlab .cprlab-icon-btn {
+  color: var(--sk-muted);
+}
+.app.cprlab .cprlab-icon-btn:hover {
+  color: var(--sk-accent);
+}
+.app.cprlab .cprlab-role-head .cprlab-icon-btn {
+  color: var(--sk-header-fg);
+  opacity: 0.6;
+}
+.app.cprlab .cprlab-role-desc {
+  padding: 0.35rem 0.7rem 0;
+  color: var(--sk-muted);
+  font-style: italic;
+}
+.app.cprlab .cprlab-role-desc p {
+  margin: 0;
+}
+.app.cprlab .cprlab-ability {
+  padding: 0.45rem 0.6rem;
+  border: 1px solid var(--sk-line);
+  border-radius: var(--sk-radius);
+  background: var(--sk-panel);
+}
+.app.cprlab .cprlab-ability.main {
+  margin: 0.5rem 0.6rem;
+  border-left: 3px solid var(--sk-accent);
+  background: var(--sk-panel-2);
+}
+.app.cprlab .ab-head {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+.app.cprlab .ab-name {
+  flex: 1;
+  font-weight: 700;
+}
+.app.cprlab .cprlab-ability.main .ab-name {
+  font-size: 1.1rem;
+}
+/* Roll button, right after the rank. Abilities without a roll keep the column so ranks line up. */
+.app.cprlab .ab-roll,
+.app.cprlab .ab-roll-gap {
+  flex: 0 0 2.1rem;
+  height: 1.8rem;
+}
+.app.cprlab .ab-roll {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--sk-radius);
+  background: var(--sk-accent);
+  color: var(--sk-accent-fg);
+  font-size: 0.95rem;
+}
+.app.cprlab .ab-roll:hover {
+  filter: brightness(1.12);
+  color: var(--sk-accent-fg);
+}
+.app.cprlab .ab-mod,
+.app.cprlab .ab-ratio {
+  font-size: 0.8rem;
+  color: var(--sk-muted);
+}
+.app.cprlab .ab-ratio small {
+  font-size: 0.7rem;
+}
+.app.cprlab .ab-rank {
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+  color: var(--sk-muted);
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+.app.cprlab .ab-rank input {
+  width: 2.6rem;
+  height: 1.8rem;
+  text-align: center;
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: var(--sk-accent);
+  border-color: var(--sk-line);
+  background: var(--sk-panel);
+}
+.app.cprlab .ab-note {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.4rem;
+  margin-top: 0.25rem;
+  color: var(--sk-fg);
+  font-size: 0.85rem;
+}
+.app.cprlab .ab-note p {
+  flex: 1;
+  margin: 0;
+  opacity: 0.85;
+}
+.app.cprlab .ab-note .cprlab-icon-btn {
+  opacity: 0;
+}
+.app.cprlab .cprlab-ability:hover .ab-note .cprlab-icon-btn {
+  opacity: 1;
+}
+.app.cprlab .cprlab-subabilities {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(17rem, 1fr));
+  gap: 0.45rem;
+  padding: 0 0.6rem 0.6rem;
+}
+
+/* Compact: one line per ability, the reminder opens on hover. */
+.app.cprlab .view-compact .cprlab-subabilities {
+  grid-template-columns: 1fr;
+  gap: 0;
+}
+.app.cprlab .view-compact .cprlab-subabilities .cprlab-ability {
+  border-radius: 0;
+  border-width: 0 0 1px;
+  padding: 0.25rem 0.4rem;
+}
+.app.cprlab .view-compact .cprlab-subabilities .ab-roll,
+.app.cprlab .view-compact .cprlab-subabilities .ab-roll-gap,
+.app.cprlab .view-compact .cprlab-subabilities .ab-rank input {
+  height: 1.5rem;
+}
+.app.cprlab .view-compact .ab-note p {
+  display: -webkit-box;
+  -webkit-line-clamp: 1;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+.app.cprlab .view-compact .cprlab-ability:hover .ab-note p {
+  -webkit-line-clamp: unset;
+}
+
+/* Exec team: one slot per Rank 3/5/9, an Actor dropped on it fills it. */
+.app.cprlab .cprlab-team {
+  padding: 0 0.6rem 0.6rem;
+}
+.app.cprlab .cprlab-team-title {
+  margin: 0.2rem 0 0.4rem;
+  border: none;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--sk-muted);
+}
+.app.cprlab .cprlab-team-slots {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(16rem, 1fr));
+  gap: 0.5rem;
+}
+.app.cprlab .cprlab-team-slot {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  min-height: 3.4rem;
+  padding: 0.4rem 0.5rem;
+  border: 1px solid var(--sk-line);
+  border-radius: var(--sk-radius);
+  background: var(--sk-panel-2);
+}
+.app.cprlab .cprlab-team-slot.open:not(.filled) {
+  border-style: dashed;
+}
+.app.cprlab .cprlab-team-slot.locked {
+  opacity: 0.5;
+}
+.app.cprlab .cprlab-team-slot.drop-target {
+  border-color: var(--sk-accent);
+  box-shadow: inset 0 0 0 1px var(--sk-accent);
+}
+.app.cprlab .cprlab-team-slot .team-empty {
+  color: var(--sk-muted);
+  font-size: 0.85rem;
+}
+
+/* A filled slot is a small card: who they are on top, Loyalty and its roll in a footer strip. */
+.app.cprlab .cprlab-team-slot.filled {
+  flex-direction: column;
+  align-items: stretch;
+  gap: 0;
+  padding: 0;
+  overflow: hidden;
+}
+.app.cprlab .cprlab-team-slot .team-head {
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+  padding: 0.5rem 0.55rem;
+}
+.app.cprlab .cprlab-team-slot .team-portrait img {
+  display: block;
+  width: 2.8rem;
+  height: 2.8rem;
+  border: none;
+  border-radius: var(--sk-radius);
+  object-fit: cover;
+}
+.app.cprlab .cprlab-team-slot .team-info {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+.app.cprlab .cprlab-team-slot .team-name {
+  font-weight: 700;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.app.cprlab .cprlab-team-slot .team-name.missing {
+  color: var(--sk-muted);
+  text-decoration: line-through;
+}
+/* The team role reads as a subtitle until it's edited. */
+.app.cprlab .cprlab-team-slot .team-role {
+  height: 1.4rem;
+  /* Pull the text back in line with the name; the padding only shows once the field is hovered. */
+  margin-left: calc(-0.25rem - 1px);
+  padding: 0 0.25rem;
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--sk-accent);
+  border: 1px solid transparent;
+  background: transparent;
+}
+.app.cprlab .cprlab-team-slot .team-role:hover,
+.app.cprlab .cprlab-team-slot .team-role:focus {
+  border-color: var(--sk-line);
+  background: var(--sk-panel);
+}
+.app.cprlab .cprlab-team-slot .team-role::placeholder {
+  text-transform: none;
+  letter-spacing: normal;
+  color: var(--sk-muted);
+}
+.app.cprlab .cprlab-team-slot .team-remove {
+  align-self: flex-start;
+  opacity: 0;
+}
+.app.cprlab .cprlab-team-slot:hover .team-remove,
+.app.cprlab .cprlab-team-slot .team-remove:focus {
+  opacity: 1;
+}
+.app.cprlab .cprlab-team-slot .team-foot {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.35rem 0.55rem;
+  border-top: 1px solid var(--sk-line);
+  background: var(--sk-panel);
+}
+.app.cprlab .cprlab-team-slot .team-loyalty-label {
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--sk-muted);
+}
+/* GM only, right after the label: marks the teammate Loyal to you. */
+.app.cprlab .cprlab-team-slot .team-loyal-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.5rem;
+  height: 1.5rem;
+  border: 1px solid var(--sk-line);
+  border-radius: var(--sk-radius);
+  font-size: 0.7rem;
+  color: var(--sk-muted);
+}
+.app.cprlab .cprlab-team-slot .team-loyal-toggle:hover {
+  color: var(--sk-accent);
+  border-color: var(--sk-accent);
+}
+.app.cprlab .cprlab-team-slot .team-loyal-toggle.active {
+  color: var(--sk-accent-fg);
+  border-color: var(--sk-accent);
+  background: var(--sk-accent);
+}
+/* Same height as the stepper, so the strip doesn't shrink when it's swapped out. */
+.app.cprlab .cprlab-team-slot .team-loyal {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  min-height: 1.9rem;
+  font-size: 0.8rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--sk-good);
+}
+/* - value + as one control, pushed to the right. */
+.app.cprlab .cprlab-team-slot .team-stepper {
+  margin-left: auto;
+  display: flex;
+  align-items: stretch;
+  height: 1.9rem;
+  border: 1px solid var(--sk-line);
+  border-radius: var(--sk-radius);
+  overflow: hidden;
+}
+.app.cprlab .cprlab-team-slot .team-stepper a {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.7rem;
+  font-size: 0.7rem;
+  color: var(--sk-muted);
+  background: var(--sk-panel-2);
+}
+.app.cprlab .cprlab-team-slot .team-stepper a:hover {
+  color: var(--sk-accent);
+}
+.app.cprlab .cprlab-team-slot .team-loyalty-value {
+  width: 2.4rem;
+  height: 100%;
+  padding: 0;
+  text-align: center;
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--sk-accent);
+  border: none;
+  border-left: 1px solid var(--sk-line);
+  border-right: 1px solid var(--sk-line);
+  border-radius: 0;
+  background: var(--sk-panel);
+}
+.app.cprlab .cprlab-team-slot .team-loyalty-value::-webkit-inner-spin-button,
+.app.cprlab .cprlab-team-slot .team-loyalty-value::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+.app.cprlab .cprlab-team-slot .team-roll {
+  width: 2.1rem;
+  height: 1.9rem;
+}
+.app.cprlab .cprlab-team-slot .team-roll i {
+  font-size: 0.95rem;
+  opacity: 1;
+}
+
+/* Fight: see lab-fight.css. */
+
+/* -------------------------------------------------------------------- Dock */
+
+.app.cprlab .cprlab-dock-head {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  margin: 0 0 0.4rem;
+}
+.app.cprlab .cprlab-dock-title {
+  flex: 1;
+  margin: 0;
+  border: none;
+  color: var(--sk-muted);
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+.app.cprlab .cprlab-dock-weapon {
+  margin-bottom: 0.45rem;
+  padding: 0.4rem;
+  border: 1px solid var(--sk-line);
+  border-radius: var(--sk-radius);
+  background: var(--sk-panel-2);
+}
+.app.cprlab .dw-head {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+.app.cprlab .dw-head img {
+  width: 1.8rem;
+  height: 1.8rem;
+  border: none;
+}
+.app.cprlab .dw-name {
+  font-weight: 700;
+  line-height: 1.1;
+}
+.app.cprlab .dw-meta {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin: 0.2rem 0;
+  font-size: 0.8rem;
+  color: var(--sk-muted);
+}
+.app.cprlab .dw-meta a {
+  color: var(--sk-muted);
+}
+.app.cprlab .dw-actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.3rem;
+}
+.app.cprlab .dw-actions a {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.3rem;
+  height: 1.9rem;
+  border-radius: var(--sk-radius);
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+.app.cprlab .dw-attack {
+  background: var(--sk-accent);
+  color: var(--sk-accent-fg);
+}
+.app.cprlab .dw-damage {
+  border: 1px solid var(--sk-accent);
+  color: var(--sk-accent);
+}
+.app.cprlab .dw-actions a:hover {
+  filter: brightness(1.12);
+}
+
+/* Collapsed dock: a thin rail with only the expand button. */
+.app.cprlab .cprlab-dock-toggle i {
+  transition: transform 120ms;
+}
+.app.cprlab .cprlab-dock.collapsed {
+  flex-basis: 2.2rem;
+  padding: 0.6rem 0;
+  overflow: hidden;
+}
+.app.cprlab .cprlab-dock.collapsed .cprlab-dock-head {
+  flex-direction: column;
+  gap: 0.6rem;
+}
+.app.cprlab .cprlab-dock.collapsed .cprlab-dock-title {
+  writing-mode: vertical-rl;
+  transform: rotate(180deg);
+}
+.app.cprlab .cprlab-dock.collapsed .cprlab-dock-toggle i {
+  transform: rotate(180deg);
+}
+.app.cprlab .cprlab-dock.collapsed .cprlab-dock-body {
+  display: none;
+}

@@ -1,0 +1,144 @@
+<header class="cprlab-header">
+  <div class="cprlab-portrait">
+    {{!-- Not data-edit="img": the sheet opens Tokenizer itself (shift-click: file picker), see _labPortrait. --}}
+    <img class="profile-img" src="{{lab.portrait.src}}" alt="{{actor.name}}" {{#if editable}}data-lab-portrait data-tooltip="{{lab.portrait.tip}}"{{/if}}/>
+    {{#if isHardened.value}}
+      <i class="fa-solid fa-shield overlay" data-tooltip="{{localize 'CPR.characterSheet.leftPane.hardened.reasons.isHardened'}}"></i>
+    {{/if}}
+  </div>
+
+  <div class="cprlab-identity">
+    <input class="cprlab-name" name="name" type="text" value="{{actor.name}}"
+           placeholder="{{localize 'CPR.characterSheet.leftPane.handle'}}"/>
+    {{!-- Custom role title, like the system sheet's Role field. Empty lists every role. --}}
+    <input class="cprlab-roles-line" type="text" data-lab-role-title value="{{lab.roleTitle}}"
+           placeholder="{{#if lab.roleNames}}{{lab.roleNames}}{{else}}{{localize 'CPR.global.generic.role'}}{{/if}}"
+           data-tooltip="{{localize 'CPRSKIN.lab.roleTitle'}}" aria-label="{{localize 'CPRSKIN.lab.roleTitle'}}"/>
+    <div class="cprlab-meta">
+      <div class="cprlab-chip">
+        <label>{{localize "CPR.characterSheet.leftPane.improvementPointsShort"}}</label>
+        <span>{{cprNumberFormat actor.system.improvementPoints.value}}</span>
+        <a class="improvement-points-open-ledger" data-tooltip="{{localize 'CPR.ledger.ledgerOpen'}}"><i class="fas fa-note-sticky"></i></a>
+      </div>
+      <div class="cprlab-chip">
+        <label>{{localize "CPR.characterSheet.bottomPane.reputation"}}</label>
+        <span>{{actor.system.reputation.value}}</span>
+        <a class="rollable" data-roll-type="facedown" data-roll-title="{{localize 'CPR.characterSheet.bottomPane.fight.facedown'}}"
+           data-tooltip="{{localize 'CPR.characterSheet.bottomPane.fight.facedown'}}"><i class="far fa-face-angry"></i></a>
+        <a class="reputation-open-ledger" data-tooltip="{{localize 'CPR.ledger.ledgerOpen'}}"><i class="fas fa-note-sticky"></i></a>
+      </div>
+      <div class="cprlab-chip">
+        <label>{{localize "CPR.characterSheet.rightPane.eurobucks.eurobucks"}}</label>
+        <span>{{cprNumberFormat actor.system.wealth.value}} eb</span>
+        <a class="eurobucks-open-ledger" data-tooltip="{{localize 'CPR.ledger.ledgerOpen'}}"><i class="fas fa-note-sticky"></i></a>
+      </div>
+      {{!-- Per-user theme switch (HQ <-> Gold), right of the Eurobucks chip, shown on hover; replaces the old Skin dialog. --}}
+      <a class="cprlab-theme-switch" data-lab-pref="theme" data-lab-value="{{#if lab.is.theme_gold}}hq{{else}}gold{{/if}}"
+         data-tooltip="{{lab.themeTip}}" aria-label="{{lab.themeTip}}"><i class="fas fa-palette"></i></a>
+    </div>
+  </div>
+
+  <div class="cprlab-vitals {{#if lab.is.vitals_compact}}compact{{/if}} {{#if lab.vitals.humanityTip}}has-note{{/if}} humanity-{{lab.vitals.humanityState}}">
+    <div class="cprlab-vital hp">
+      <div class="cprlab-vital-head">
+        <a class="calculate-hp cprlab-vital-label" data-tooltip="{{localize 'CPR.characterSheet.leftPane.calculateMaxHp'}}">{{localize "CPR.global.generic.hitpoints"}}</a>
+        <a class="cprlab-vital-act" data-lab-heal data-tooltip="{{localize 'CPRSKIN.lab.vitals.heal'}}" aria-label="{{localize 'CPRSKIN.lab.vitals.heal'}}"><i class="fa-solid fa-heart-pulse"></i></a>
+      </div>
+      <div class="cprlab-vital-values">
+        <input name="system.derivedStats.hp.value" type="text" value="{{actor.system.derivedStats.hp.value}}" data-dtype="Number"/>
+        <span class="cprlab-vital-steps">
+          <a class="cprlab-vital-step" data-lab-vital-step="hp" data-step="1" data-tooltip="{{localize 'CPRSKIN.lab.vitals.plus'}}" aria-label="{{localize 'CPRSKIN.lab.vitals.plus'}}"><i class="fa-solid fa-caret-up"></i></a>
+          <a class="cprlab-vital-step" data-lab-vital-step="hp" data-step="-1" data-tooltip="{{localize 'CPRSKIN.lab.vitals.minus'}}" aria-label="{{localize 'CPRSKIN.lab.vitals.minus'}}"><i class="fa-solid fa-caret-down"></i></a>
+        </span>
+        <span>/</span>
+        <input name="system.derivedStats.hp.max" type="text" value="{{actor.system.derivedStats.hp.max}}" data-dtype="Number"/>
+      </div>
+      <div class="cprlab-bar"><div style="width: {{lab.vitals.hpPct}}%"></div></div>
+    </div>
+    <div class="cprlab-vital humanity humanity-{{lab.vitals.humanityState}}">
+      <div class="cprlab-vital-head">
+        <a class="calculate-humanity cprlab-vital-label" data-tooltip="{{localize 'CPR.characterSheet.leftPane.calculateMaxHumanity'}}">{{localize "CPR.characterSheet.leftPane.humanity"}}</a>
+        <a class="cprlab-vital-act" data-lab-therapy data-tooltip="{{localize 'CPRSKIN.lab.vitals.therapy'}}" aria-label="{{localize 'CPRSKIN.lab.vitals.therapy'}}"><i class="fa-solid fa-hand-holding-heart"></i></a>
+      </div>
+      <div class="cprlab-vital-values">
+        <input name="system.derivedStats.humanity.value" type="text" value="{{actor.system.derivedStats.humanity.value}}" data-dtype="Number"/>
+        <span class="cprlab-vital-steps">
+          <a class="cprlab-vital-step" data-lab-vital-step="humanity" data-step="1" data-tooltip="{{localize 'CPRSKIN.lab.vitals.plus'}}" aria-label="{{localize 'CPRSKIN.lab.vitals.plus'}}"><i class="fa-solid fa-caret-up"></i></a>
+          <a class="cprlab-vital-step" data-lab-vital-step="humanity" data-step="-1" data-tooltip="{{localize 'CPRSKIN.lab.vitals.minus'}}" aria-label="{{localize 'CPRSKIN.lab.vitals.minus'}}"><i class="fa-solid fa-caret-down"></i></a>
+        </span>
+        <span>/</span>
+        <input name="system.derivedStats.humanity.max" type="text" value="{{actor.system.derivedStats.humanity.max}}" data-dtype="Number"/>
+      </div>
+      <div class="cprlab-bar"><div style="width: {{lab.vitals.humanityPct}}%"></div></div>
+    </div>
+    {{!-- Armor SP: helmet on top, body below, for the locations that have armor. --}}
+    <div class="cprlab-sp" aria-label="{{localize 'CPRSKIN.lab.vitals.sp'}}">
+      <span class="cprlab-sp-label">SP</span>
+      {{#each lab.vitals.armor as |a|}}
+        {{!-- Click to ablate this location by 1. --}}
+        <a class="cprlab-sp-loc {{a.id}} {{#if a.low}}low{{/if}}" data-lab-ablate="{{a.id}}" role="button" data-tooltip="{{a.tip}}">
+          <i class="{{a.icon}}"></i><b>{{a.value}}</b>
+        </a>
+      {{else}}
+        <span class="cprlab-sp-loc none" data-tooltip="{{localize 'CPRSKIN.lab.vitals.noArmor'}}">–</span>
+      {{/each}}
+    </div>
+    {{#if lab.vitals.humanityTip}}
+      {{!-- EMP 2 or below: how close to cyberpsychosis, always shown under HP and Humanity. --}}
+      <div class="cprlab-humanity-note"><i class="fa-solid fa-brain"></i><span>{{lab.vitals.humanityTip}}</span></div>
+    {{/if}}
+    {{#if lab.is.vitals_compact}}
+    {{!-- One status line: wound state on the left, Death Save on the right. --}}
+    <div class="cprlab-status wound-{{lab.vitals.wound}}">
+      <span class="cprlab-wound" data-tooltip="{{localize 'CPR.characterSheet.leftPane.woundState'}}">
+        <img src="{{lab.vitals.woundIcon}}" width="18" height="18" alt=""/>
+        <span>{{lab.vitals.woundLabel}}</span>
+      </span>
+      <span class="cprlab-ds">
+        <a class="rollable cprlab-ds-roll" data-roll-type="deathsave"
+           data-roll-title="{{localize 'CPR.characterSheet.leftPane.deathSave.title'}}"
+           data-tooltip="{{localize 'CPR.characterSheet.leftPane.deathSave.roll'}}" aria-label="{{localize 'CPR.characterSheet.leftPane.deathSave.roll'}}"><i class="fa-solid fa-dice-d10"></i> <span>{{localize "CPRSKIN.lab.vitals.deathSave"}}</span></a>
+        <strong data-tooltip="{{lab.vitals.deathTip}}">{{lab.vitals.deathSave}}</strong>
+        <a class="reset-deathsave-value" data-tooltip="{{localize 'CPR.characterSheet.leftPane.deathSave.reset'}}"><i class="fa-solid fa-arrow-rotate-left"></i></a>
+        <a class="increase-deathsave-value" data-tooltip="{{localize 'CPR.characterSheet.leftPane.deathSave.increase'}}"><i class="far fa-circle-up"></i></a>
+      </span>
+    </div>
+    {{else}}
+    <div class="cprlab-vital small">
+      <a class="rollable cprlab-vital-label" data-roll-type="deathsave"
+         data-roll-title="{{localize 'CPR.characterSheet.leftPane.deathSave.title'}}"
+         data-tooltip="{{localize 'CPR.characterSheet.leftPane.deathSave.roll'}}">{{localize "CPR.characterSheet.leftPane.deathSave.title"}}</a>
+      <div class="cprlab-vital-values">
+        <a class="reset-deathsave-value" data-tooltip="{{localize 'CPR.characterSheet.leftPane.deathSave.reset'}}"><i class="fa-solid fa-arrow-rotate-left"></i></a>
+        <strong data-tooltip="{{lab.vitals.deathTip}}">{{lab.vitals.deathSave}}</strong>
+        <a class="increase-deathsave-value" data-tooltip="{{localize 'CPR.characterSheet.leftPane.deathSave.increase'}}"><i class="far fa-circle-up"></i></a>
+      </div>
+    </div>
+    <div class="cprlab-vital small">
+      <span class="cprlab-vital-label">{{localize "CPR.characterSheet.leftPane.woundState"}}</span>
+      <div class="cprlab-vital-values">
+        <img src="{{lab.vitals.woundIcon}}" width="22" height="22" alt="{{lab.vitals.woundLabel}}" data-tooltip="{{lab.vitals.woundLabel}}"/>
+      </div>
+    </div>
+    {{/if}}
+  </div>
+
+  <div class="cprlab-stats">
+    {{#each lab.stats as |stat|}}
+      <div class="cprlab-stat">
+        {{#if stat.hasMax}}
+          <div class="cprlab-stat-value of">
+            <input name="system.stats.{{stat.key}}.value" type="text" value="{{stat.value}}" data-dtype="Number"/>
+            <span>/</span>
+            <input name="system.stats.{{stat.key}}.max" type="text" value="{{stat.max}}" data-dtype="Number"/>
+          </div>
+        {{else}}
+          <div class="cprlab-stat-value">
+            <input name="system.stats.{{stat.key}}.value" type="text" value="{{stat.value}}" data-dtype="Number"/>
+          </div>
+        {{/if}}
+        <a class="rollable cprlab-stat-label" data-roll-type="stat" data-roll-title="{{stat.key}}" data-tooltip="{{stat.tooltip}}">{{stat.label}}</a>
+      </div>
+    {{/each}}
+  </div>
+</header>

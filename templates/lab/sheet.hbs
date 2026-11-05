@@ -1,0 +1,90 @@
+{{!-- CPR Sheet Skin character sheet. Controls keep the system's classes and data-* attributes so its listeners still work. --}}
+<form class="cprlab-sheet{{#each lab.prefs}} cprlab-{{@key}}-{{this}}{{/each}}" autocomplete="off">
+  {{> "modules/cpr-sheet-skin/templates/lab/header.hbs"}}
+
+  {{#if lab.effects.length}}
+    {{!-- Effects changing the character right now. The handle hides the chips (remembered per user). --}}
+    <div class="cprlab-effects-bar {{#if lab.ui.effectsBar}}collapsed{{/if}}" data-lab-ui-target="effectsBar">
+      <a class="cprlab-effects-label" data-lab-effects-tab data-tooltip="{{localize 'CPRSKIN.lab.effects.open'}}">
+        <i class="fa-solid fa-bolt"></i> {{localize "CPRSKIN.lab.effects.title"}}
+        <span class="cprlab-effects-count">{{lab.effects.length}}</span></a>
+      {{#each lab.effects as |e|}}
+        {{#if e.injury}}
+          <a class="cprlab-effect-chip injury" data-lab-injury="{{e.itemId}}" data-tooltip="{{e.tooltip}}">
+            <img src="{{e.img}}" alt=""/><span>{{e.name}}</span></a>
+        {{else}}
+          <a class="cprlab-effect-chip {{#if e.wound}}injury{{/if}}" data-lab-effect="{{e.uuid}}" data-tooltip="{{e.tooltip}}">
+            <img src="{{e.img}}" alt=""/><span>{{e.name}}</span></a>
+        {{/if}}
+      {{/each}}
+      <a class="cprlab-icon-btn cprlab-effects-toggle" data-lab-ui="effectsBar"
+         data-tip-open="{{localize 'CPRSKIN.lab.effects.hide'}}" data-tip-closed="{{localize 'CPRSKIN.lab.effects.show'}}"
+         data-tooltip="{{#if lab.ui.effectsBar}}{{localize 'CPRSKIN.lab.effects.show'}}{{else}}{{localize 'CPRSKIN.lab.effects.hide'}}{{/if}}"
+         aria-label="{{#if lab.ui.effectsBar}}{{localize 'CPRSKIN.lab.effects.show'}}{{else}}{{localize 'CPRSKIN.lab.effects.hide'}}{{/if}}"><i class="fa-solid fa-chevron-up"></i></a>
+    </div>
+  {{/if}}
+
+  <nav class="cprlab-tabs" data-group="primary">
+    {{#each lab.tabs}}
+      <a class="cprlab-tab" data-tab="{{id}}" data-tooltip="{{localize label}}"><i class="{{icon}}"></i><span>{{localize label}}</span></a>
+    {{/each}}
+    <div class="cprlab-filter">
+      <i class="fa-solid fa-magnifying-glass"></i>
+      <input class="filter-contents" type="text" value="{{options.cprContentFilter}}"
+             placeholder="{{localize 'CPR.characterSheet.leftPane.filter.placeholder'}}"/>
+      <a data-tooltip="{{localize 'CPR.actorSheets.clearFilter'}}"><i class="fas fa-xmark reset-content-filter"></i></a>
+    </div>
+  </nav>
+
+
+  <div class="cprlab-main">
+    <section class="cprlab-body">
+      <div class="tab" data-group="primary" data-tab="skills">
+        {{> "modules/cpr-sheet-skin/templates/lab/skills.hbs"}}
+      </div>
+      <div class="tab" data-group="primary" data-tab="fight">
+        {{> "modules/cpr-sheet-skin/templates/lab/fight.hbs"}}
+      </div>
+      <div class="tab" data-group="primary" data-tab="role">
+        {{> "modules/cpr-sheet-skin/templates/lab/role.hbs"}}
+      </div>
+      <div class="tab gear-tab cprlab-system-tab" data-group="primary" data-tab="gear">
+        {{> "modules/cpr-sheet-skin/templates/lab/gear.hbs"}}
+      </div>
+      <div class="tab cyberware-tab cprlab-system-tab" data-group="primary" data-tab="cyberware">
+        {{> "modules/cpr-sheet-skin/templates/lab/cyber.hbs"}}
+      </div>
+      <div class="tab" data-group="primary" data-tab="lifepath">
+        {{#if lab.hq.housing}}
+          <div class="application cpr-hq cprlab-hq cprlab-hq-housing" data-lab-hq="housing">
+            <div class="window-content"><div class="downtime-app">{{> (lookup lab.hq.housing "partial") lab.hq.housing.context}}</div></div>
+          </div>
+        {{/if}}
+        {{> "modules/cpr-sheet-skin/templates/lab/lifepath.hbs"}}
+      </div>
+      {{#if lab.hq.downtime}}
+        <div class="tab" data-group="primary" data-tab="downtime">
+          <div class="application cpr-hq cprlab-hq" data-lab-hq="downtime">
+            <div class="window-content"><div class="downtime-app">{{> (lookup lab.hq.downtime "partial") lab.hq.downtime.context}}</div></div>
+          </div>
+        </div>
+      {{/if}}
+      {{#if lab.hq.workshop}}
+        <div class="tab" data-group="primary" data-tab="workshop">
+          <div class="application cpr-hq cprlab-hq" data-lab-hq="workshop">
+            <div class="window-content"><div class="ws-app">{{> (lookup lab.hq.workshop "partial") lab.hq.workshop.context}}</div></div>
+          </div>
+        </div>
+      {{/if}}
+      <div class="tab effects-tab cprlab-system-tab" data-group="primary" data-tab="effects">
+        {{> "modules/cpr-sheet-skin/templates/lab/effects.hbs"}}
+      </div>
+    </section>
+
+    {{#if lab.is.dock_right}}
+      <aside class="cprlab-dock {{#if lab.ui.dock}}collapsed{{/if}}" data-lab-ui-target="dock">
+        {{> "modules/cpr-sheet-skin/templates/lab/dock.hbs"}}
+      </aside>
+    {{/if}}
+  </div>
+</form>

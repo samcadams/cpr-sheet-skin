@@ -1,0 +1,669 @@
+/*
+ * CPR Sheet Skin: Gear and Cyber tabs. Scoped to .app.cprlab,
+ * coloured only through the --sk-* tokens (see lab.css).
+ */
+
+/* ------------------------------------------------------------- Shared bits */
+
+.app.cprlab .cprlab-gear,
+.app.cprlab .cprlab-cyber {
+  padding: 0.5rem 0.6rem;
+}
+.app.cprlab .cprlab-gear .hide,
+.app.cprlab .cprlab-cyber .hide {
+  display: none !important;
+}
+.app.cprlab .cprlab-pill-count {
+  opacity: 0.7;
+  font-variant-numeric: tabular-nums;
+}
+.app.cprlab .cprlab-gear-sp {
+  font-size: 0.78rem;
+  color: var(--sk-muted);
+  padding: 0.05rem 0.45rem;
+  border: 1px solid var(--sk-line);
+  border-radius: var(--sk-radius);
+  background: var(--sk-panel-2);
+  white-space: nowrap;
+}
+.app.cprlab .cprlab-gear-sp b {
+  color: var(--sk-fg);
+  font-variant-numeric: tabular-nums;
+}
+.app.cprlab .cprlab-gear-sp.low b {
+  color: var(--sk-danger);
+}
+.app.cprlab .cprlab-gear-sp.none {
+  font-style: italic;
+}
+
+/* Small icon buttons (system classes on them keep the system's listeners). */
+.app.cprlab .cprlab-act {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.55rem;
+  height: 1.55rem;
+  border-radius: var(--sk-radius);
+  color: var(--sk-muted);
+  font-size: 0.8rem;
+  cursor: pointer;
+}
+.app.cprlab .cprlab-act:hover {
+  color: var(--sk-accent);
+  background: var(--sk-panel-2);
+}
+.app.cprlab .cprlab-act.on {
+  color: var(--sk-accent);
+}
+.app.cprlab .cprlab-act.strong {
+  color: var(--sk-accent);
+  border: 1px solid var(--sk-accent);
+}
+.app.cprlab .cprlab-act.danger:hover {
+  color: var(--sk-danger);
+}
+.app.cprlab .cprlab-act.disabled {
+  opacity: 0.25;
+  cursor: default;
+}
+.app.cprlab .cprlab-act.disabled:hover {
+  background: none;
+  color: var(--sk-muted);
+}
+
+/* Little labelled values: "DMG 3d6", "Head 11/11", "HL 2d6". */
+.app.cprlab .cprlab-gv {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 0.25rem;
+  position: relative;
+  padding: 0 0.35rem 0.1rem;
+  border-radius: var(--sk-radius);
+  background: var(--sk-panel-2);
+  font-size: 0.78rem;
+  white-space: nowrap;
+}
+.app.cprlab .cprlab-gv small {
+  color: var(--sk-muted);
+  font-size: 0.64rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+.app.cprlab .cprlab-gv b {
+  font-variant-numeric: tabular-nums;
+}
+.app.cprlab .cprlab-gv.warn b {
+  color: var(--sk-accent);
+}
+.app.cprlab .cprlab-gv.bad b {
+  color: var(--sk-danger);
+}
+.app.cprlab .cprlab-gv.hl b {
+  color: var(--sk-danger);
+}
+.app.cprlab .cprlab-gv .bar {
+  position: absolute;
+  left: 0.35rem;
+  right: 0.35rem;
+  bottom: 0.05rem;
+  height: 2px;
+  background: var(--sk-line);
+  border-radius: 1px;
+  overflow: hidden;
+}
+.app.cprlab .cprlab-gv .bar > i {
+  display: block;
+  height: 100%;
+  background: var(--sk-good);
+}
+.app.cprlab .cprlab-gv.warn .bar > i {
+  background: var(--sk-accent);
+}
+.app.cprlab .cprlab-gtag {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.2rem;
+  padding: 0 0.35rem;
+  border: 1px solid var(--sk-line);
+  border-radius: 999px;
+  font-size: 0.66rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--sk-muted);
+  white-space: nowrap;
+}
+.app.cprlab .cprlab-gtag.on {
+  color: var(--sk-good);
+  border-color: var(--sk-good);
+}
+.app.cprlab .cprlab-gtag.off {
+  border-style: dashed;
+}
+
+/* ------------------------------------------------------------------- Gear */
+
+.app.cprlab .cprlab-gear-cat {
+  margin-bottom: 0.6rem;
+}
+.app.cprlab .cprlab-gear-head {
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+  border-bottom: 1px solid var(--sk-line);
+  margin-bottom: 0.15rem;
+}
+.app.cprlab .cprlab-gear-title {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.15rem 0;
+  color: var(--sk-muted);
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  cursor: pointer;
+}
+.app.cprlab .cprlab-gear-title i {
+  font-size: 0.65rem;
+  width: 0.7rem;
+}
+.app.cprlab .cprlab-gear-head .item-create {
+  width: 1.35rem;
+  height: 1.35rem;
+}
+
+.app.cprlab .cprlab-gear-list,
+.app.cprlab .cprlab-cyber-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+/* One grid for every category, so columns line up down the whole tab. */
+.app.cprlab .cprlab-gear-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 2.2fr) 10.8rem 2.6rem 9.6rem;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.18rem 0.3rem 0.18rem 0.35rem;
+  border-left: 3px solid transparent;
+  border-radius: var(--sk-radius);
+  background: transparent;
+}
+.app.cprlab .gear-tab li.cprlab-gear-row:nth-child(odd),
+.app.cprlab .gear-tab li.cprlab-gear-row:nth-child(even) {
+  background: transparent;
+}
+.app.cprlab .gear-tab li.cprlab-gear-row:nth-child(even) {
+  background: var(--sk-row-alt);
+}
+.app.cprlab .cprlab-gear-row:hover {
+  background: var(--sk-panel-2) !important;
+}
+/* Left edge says the state at a glance: accent = equipped, line = carried, none = stashed. */
+.app.cprlab .cprlab-gear-row.state-equipped {
+  border-left-color: var(--sk-accent);
+}
+.app.cprlab .cprlab-gear-row.state-carried {
+  border-left-color: var(--sk-muted);
+}
+.app.cprlab .cprlab-gear-row.state-owned .cprlab-gear-name {
+  opacity: 0.72;
+}
+
+.app.cprlab .cprlab-gear-name,
+.app.cprlab .cprlab-cyber-name {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  min-width: 0;
+  color: var(--sk-fg);
+  cursor: pointer;
+}
+.app.cprlab .cprlab-gear-name img,
+.app.cprlab .cprlab-cyber-name img {
+  width: 1.6rem;
+  height: 1.6rem;
+  flex: none;
+  border: none;
+  border-radius: var(--sk-radius);
+  object-fit: cover;
+}
+.app.cprlab .cprlab-gear-name .nm,
+.app.cprlab .cprlab-cyber-name .nm {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-weight: 600;
+}
+.app.cprlab .cprlab-gear-name:hover .nm,
+.app.cprlab .cprlab-cyber-name:hover .nm {
+  color: var(--sk-accent);
+}
+.app.cprlab .cprlab-gear-name .up,
+.app.cprlab .cprlab-cyber-name .up,
+.app.cprlab .cprlab-gear-name .pin {
+  color: var(--sk-accent);
+  font-size: 0.7rem;
+}
+.app.cprlab .cprlab-gear-stats {
+  align-items: center;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem;
+  min-width: 0;
+  overflow: hidden;
+}
+
+/* Upkeep column right of the equip selector: status icons (Damaged, Due, ...) at rest, the toolbox while the row is
+   hovered or focused; empty for untracked items. */
+.app.cprlab .cprlab-gear-upkeep {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Magazine | reload | change ammo stay together on one line; buttons inside the stats are a bit smaller. */
+.app.cprlab .cprlab-gv-mag {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.1rem;
+}
+.app.cprlab .cprlab-gear-stats .cprlab-act {
+  width: 1.3rem;
+  height: 1.3rem;
+}
+.app.cprlab .cprlab-gear-installed .cprlab-act {
+  width: 1.3rem;
+  height: 1.3rem;
+}
+
+.app.cprlab .cprlab-gear-amount {
+  display: inline-flex;
+  margin-right: 0.2rem;
+  align-items: center;
+  gap: 0.1rem;
+}
+.app.cprlab .cprlab-gear-amount .x {
+  color: var(--sk-muted);
+  font-size: 0.75rem;
+}
+.app.cprlab .cprlab-gear-amount input.gear-amount-input {
+  width: 2.6rem;
+  height: 1.4rem;
+  padding: 0 0.2rem;
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+/* Equip state: three segments, the active one wide with its label. */
+.app.cprlab .cprlab-equip {
+  display: flex;
+  height: 1.55rem;
+}
+.app.cprlab .cprlab-equip:empty {
+  visibility: hidden;
+}
+.app.cprlab .cprlab-equip-seg {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.3rem;
+  flex: 0 0 1.75rem;
+  border: 1px solid var(--sk-line);
+  margin-left: -1px;
+  color: var(--sk-muted);
+  background: var(--sk-panel);
+  font-size: 0.72rem;
+  cursor: pointer;
+  overflow: hidden;
+  white-space: nowrap;
+  transition: flex-basis 120ms, background 120ms;
+}
+.app.cprlab .cprlab-equip-seg:first-child {
+  margin-left: 0;
+  border-radius: var(--sk-radius) 0 0 var(--sk-radius);
+}
+.app.cprlab .cprlab-equip-seg:last-child {
+  border-radius: 0 var(--sk-radius) var(--sk-radius) 0;
+}
+.app.cprlab .cprlab-equip-seg span {
+  display: none;
+}
+.app.cprlab .cprlab-equip-seg:hover {
+  color: var(--sk-fg);
+  border-color: var(--sk-accent);
+  position: relative;
+  z-index: 1;
+}
+.app.cprlab .cprlab-equip-seg.active {
+  flex: 1 1 auto;
+  cursor: default;
+  font-weight: 700;
+}
+.app.cprlab .cprlab-equip-seg.active span {
+  display: inline;
+}
+.app.cprlab .cprlab-equip-seg.active.seg-equipped {
+  background: var(--sk-accent);
+  border-color: var(--sk-accent);
+  color: var(--sk-accent-fg);
+}
+.app.cprlab .cprlab-equip-seg.active.seg-carried {
+  background: var(--sk-panel-2);
+  border-color: var(--sk-muted);
+  color: var(--sk-fg);
+}
+.app.cprlab .cprlab-equip-seg.active.seg-owned {
+  background: var(--sk-panel-2);
+  color: var(--sk-muted);
+}
+
+/* Better Grenades: labelled Throw (equip column of grenade ammo) and Fire (first in a launcher's actions). */
+.app.cprlab .cprlab-act.cprlab-grenade {
+  gap: 0.3rem;
+  border: 1px solid var(--sk-accent);
+  border-radius: var(--sk-radius);
+  color: var(--sk-accent);
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+.app.cprlab .cprlab-act.cprlab-grenade:hover {
+  background: var(--sk-accent);
+  color: var(--sk-accent-fg);
+}
+.app.cprlab .cprlab-equip .cprlab-grenade-throw {
+  flex: 1 1 auto;
+  height: 100%;
+}
+.app.cprlab .cprlab-gear-actions .cprlab-grenade-fire {
+  width: auto;
+  padding: 0 0.5rem;
+  margin-right: 0.2rem;
+}
+
+.app.cprlab .cprlab-gear-actions {
+  display: flex;
+  justify-content: flex-end;
+  flex-wrap: nowrap;
+}
+/* Pin, edit and delete only while the row is hovered (or keyboard-focused); they keep their space so columns stay put. */
+.app.cprlab .cprlab-gear-row .cprlab-hover-act {
+  visibility: hidden;
+}
+.app.cprlab .cprlab-gear-row:hover .cprlab-hover-act,
+.app.cprlab .cprlab-gear-row:focus-within .cprlab-hover-act {
+  visibility: visible;
+}
+
+/* Items installed in this one (ammo, upgrades, programs, options). */
+.app.cprlab .cprlab-gear-installed {
+  grid-column: 1 / -1;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0 0 0.1rem 2rem;
+}
+.app.cprlab .cprlab-gear-installed .lbl {
+  color: var(--sk-muted);
+  font-size: 0.64rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+.app.cprlab .cprlab-gchip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  padding: 0 0.15rem 0 0.45rem;
+  border: 1px solid var(--sk-line);
+  border-radius: 999px;
+  font-size: 0.74rem;
+}
+.app.cprlab .cprlab-gchip small {
+  color: var(--sk-muted);
+  font-size: 0.62rem;
+  text-transform: uppercase;
+}
+.app.cprlab .cprlab-gchip a:hover {
+  color: var(--sk-accent);
+}
+.app.cprlab .cprlab-gchip .uninstall-single-item {
+  color: var(--sk-muted);
+  padding: 0 0.2rem;
+}
+
+.app.cprlab .cprlab-gear-emptycats {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.3rem;
+  margin-top: 0.4rem;
+  padding-top: 0.4rem;
+  border-top: 1px dashed var(--sk-line);
+}
+.app.cprlab .cprlab-gear-emptycats .cprlab-pill {
+  color: var(--sk-muted);
+  border-style: dashed;
+}
+
+/* ------------------------------------------------------------------ Cyber */
+
+.app.cprlab .cprlab-cyber-groups {
+  column-width: 30rem;
+  column-gap: 0.9rem;
+}
+.app.cprlab .cprlab-cyber-group {
+  break-inside: avoid;
+  margin-bottom: 0.7rem;
+}
+.app.cprlab .cprlab-group-title.static {
+  cursor: default;
+}
+.app.cprlab .cprlab-cyber-group .cprlab-group-title .cprlab-slots {
+  margin-left: 0.4rem;
+  font-weight: 400;
+  letter-spacing: 0;
+}
+.app.cprlab .cprlab-cyber-loose .cprlab-group-title {
+  color: var(--sk-accent);
+}
+
+.app.cprlab .cprlab-cyber-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 9.5rem 5.6rem 4.8rem;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.15rem 0.3rem;
+  border-left: 3px solid transparent;
+  border-radius: var(--sk-radius);
+}
+.app.cprlab .cyberware-tab li.cprlab-cyber-row {
+  background: transparent;
+}
+.app.cprlab .cprlab-cyber-row:hover {
+  background: var(--sk-panel-2);
+}
+.app.cprlab .cprlab-cyber-row.depth-0.foundation {
+  border-left-color: var(--sk-accent);
+  background: var(--sk-row-alt);
+}
+.app.cprlab .cprlab-cyber-row.uninstalled {
+  border-left: 3px dashed var(--sk-line);
+  background: transparent;
+}
+.app.cprlab .cprlab-cyber-row.uninstalled .cprlab-cyber-name {
+  opacity: 0.8;
+}
+.app.cprlab .cprlab-cyber-row:not(.depth-0) .cprlab-cyber-name .nm {
+  font-weight: 400;
+}
+.app.cprlab .cprlab-cyber-name .branch {
+  color: var(--sk-line);
+  font-size: 0.7rem;
+}
+.app.cprlab .cprlab-cyber-name img {
+  width: 1.35rem;
+  height: 1.35rem;
+}
+.app.cprlab .cprlab-cyber-type {
+  text-align: right;
+  overflow: hidden;
+  color: var(--sk-muted);
+  font-size: 0.72rem;
+  white-space: nowrap;
+}
+
+/* Option slots as pips. */
+.app.cprlab .cprlab-slots {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+}
+.app.cprlab .cprlab-slots > i {
+  width: 0.45rem;
+  height: 0.45rem;
+  border: 1px solid var(--sk-muted);
+  border-radius: 1px;
+}
+.app.cprlab .cprlab-slots > i.full {
+  background: var(--sk-accent);
+  border-color: var(--sk-accent);
+}
+.app.cprlab .cprlab-slots small {
+  margin-left: 0.25rem;
+  color: var(--sk-muted);
+  font-size: 0.68rem;
+  font-variant-numeric: tabular-nums;
+}
+
+/* ----------------------------------------------- Upkeep (cpr-hq maintenance) */
+
+.app.cprlab .cprlab-gtag.uk {
+  cursor: pointer;
+}
+.app.cprlab .cprlab-gtag.uk-warn { color: var(--sk-warn); border-color: var(--sk-warn); }
+.app.cprlab .cprlab-gtag.uk-alert { color: var(--sk-alert); border-color: var(--sk-alert); }
+.app.cprlab .cprlab-gtag.uk-info { color: var(--sk-accent); border-color: var(--sk-accent); }
+.app.cprlab .cprlab-gtag.uk-bad {
+  color: var(--sk-danger);
+  border-color: var(--sk-danger);
+  background: color-mix(in srgb, var(--sk-danger) 14%, transparent);
+}
+.app.cprlab .cprlab-gtag.uk-dead {
+  color: #fff;
+  border-color: var(--sk-danger);
+  background: color-mix(in srgb, var(--sk-danger) 70%, transparent);
+}
+/* GM only: a condition hidden from players. */
+.app.cprlab .cprlab-gtag.uk-hidden { border-style: dashed; opacity: 0.75; }
+.app.cprlab .cprlab-gtag.uk:hover { filter: brightness(1.25); }
+.app.cprlab .cprlab-act.cprlab-upkeep-act { opacity: 0.45; }
+.app.cprlab .cprlab-act.cprlab-upkeep-act.uk-on { opacity: 1; color: var(--sk-warn); }
+.app.cprlab .cprlab-pill.uk-pill i { color: var(--sk-warn); }
+.app.cprlab .cprlab-cyber-type .cprlab-gtag.uk { margin-left: 0.2rem; }
+
+.cprlab-upkeep-dialog .cprlab-uk-head {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+.cprlab-upkeep-dialog .cprlab-uk-head img {
+  width: 40px;
+  height: 40px;
+  border: none;
+  object-fit: contain;
+}
+.cprlab-upkeep-dialog .cprlab-uk-state {
+  display: inline-block;
+  margin-left: 0.3rem;
+  padding: 0 0.4rem;
+  border: 1px solid currentColor;
+  border-radius: 999px;
+  font-size: 0.75em;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+.cprlab-upkeep-dialog .st-covered,
+.cprlab-upkeep-dialog .st-done { color: #4fd18b; }
+.cprlab-upkeep-dialog .st-due { color: #c9a227; }
+.cprlab-upkeep-dialog .st-neglected { color: #f08a3c; }
+.cprlab-upkeep-dialog .st-pending { color: #31a6b4; }
+.cprlab-upkeep-dialog .st-damaged { color: #e0303f; }
+.cprlab-upkeep-dialog .st-exempt { opacity: 0.7; }
+.cprlab-upkeep-dialog .cprlab-uk-lines {
+  margin: 0.5rem 0;
+  padding-left: 1.1rem;
+}
+.cprlab-upkeep-dialog .cprlab-uk-malf {
+  display: flex;
+  gap: 0.5rem;
+  padding: 0.4rem 0.5rem;
+  border-left: 4px solid #e0303f;
+  background: rgba(224, 48, 63, 0.12);
+  border-radius: 3px;
+}
+.cprlab-upkeep-dialog .cprlab-uk-malf > i { color: #e0303f; margin-top: 0.2rem; }
+.cprlab-upkeep-dialog .cprlab-uk-buttons {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.35rem;
+  margin-top: 0.5rem;
+}
+.cprlab-upkeep-dialog .cprlab-uk-buttons button.primary { grid-column: 1 / -1; font-weight: bold; }
+.cprlab-upkeep-dialog .cprlab-uk-buttons button.wide { grid-column: 1 / -1; }
+.cprlab-upkeep-dialog .cprlab-uk-cond {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.3rem;
+  margin-top: 0.5rem;
+  padding-top: 0.4rem;
+  border-top: 1px dashed currentColor;
+}
+.cprlab-upkeep-dialog .cprlab-uk-cond .lbl { flex: 1 0 100%; font-size: 0.8em; text-transform: uppercase; letter-spacing: 0.05em; opacity: 0.75; }
+.cprlab-upkeep-dialog .cprlab-uk-cond button { flex: 1 1 0; white-space: nowrap; font-size: 0.85em; }
+.cprlab-upkeep-dialog .cprlab-uk-cond button.active { border-color: #e0303f; box-shadow: 0 0 0 1px #e0303f inset; font-weight: bold; }
+.cprlab-upkeep-dialog .cprlab-uk-hide { flex: 1 0 100%; display: flex; align-items: center; gap: 0.3rem; }
+.cprlab-upkeep-dialog .st-broken { color: #e0303f; }
+.app.cprlab .cprlab-uk-strip {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.25rem;
+  margin: 0.2rem 0 0.15rem;
+}
+.app.cprlab .cprlab-uk-malftext {
+  flex-basis: 100%;
+  font-size: 0.72rem;
+  line-height: 1.25;
+  color: var(--sk-danger);
+}
+
+/* Upkeep status column (see .cprlab-gear-upkeep): one coloured icon per state, each opens the upkeep dialog. */
+.app.cprlab .cprlab-uk-col {
+  display: flex;
+  gap: 0.3rem;
+  align-items: center;
+  font-size: 0.85rem;
+}
+.app.cprlab .cprlab-uk-col > i { cursor: pointer; color: var(--sk-warn); }
+.app.cprlab .cprlab-uk-col > i.uk-alert { color: var(--sk-alert); }
+.app.cprlab .cprlab-uk-col > i.uk-info { color: var(--sk-accent); }
+.app.cprlab .cprlab-uk-col > i.uk-bad,
+.app.cprlab .cprlab-uk-col > i.uk-dead { color: var(--sk-danger); }
+.app.cprlab .cprlab-uk-col > i.uk-hidden { opacity: 0.6; }
+.app.cprlab .cprlab-uk-col > i:hover { filter: brightness(1.25); }
+.app.cprlab .cprlab-gear-row .cprlab-gear-upkeep .cprlab-upkeep-act { visibility: hidden; }
+.app.cprlab .cprlab-gear-row.has-uk .cprlab-gear-upkeep .cprlab-upkeep-act { position: absolute; }
+.app.cprlab .cprlab-gear-row:hover .cprlab-gear-upkeep .cprlab-upkeep-act,
+.app.cprlab .cprlab-gear-row:focus-within .cprlab-gear-upkeep .cprlab-upkeep-act { visibility: visible; }
+.app.cprlab .cprlab-gear-row.has-uk:hover .cprlab-uk-col,
+.app.cprlab .cprlab-gear-row.has-uk:focus-within .cprlab-uk-col { visibility: hidden; }

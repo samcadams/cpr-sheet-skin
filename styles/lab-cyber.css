@@ -1,0 +1,147 @@
+/*
+ * Cyber tab, body view (templates/lab/cyber-body.hbs, scripts/lab/cyber-body/).
+ * Two columns of cyberware around a canvas that covers the whole stage.
+ */
+
+.app.cprlab .cprlab-cb-stage {
+  position: relative;
+  display: grid;
+  grid-template-columns: 232px minmax(260px, 1fr) 232px;
+  height: 560px;
+  overflow: hidden;
+}
+.app.cprlab .cprlab-cb-stage > canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+.app.cprlab .cprlab-cb-col {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0.7rem;
+  padding-top: 0.2rem;
+  min-width: 0;
+}
+.app.cprlab .cprlab-cb-stage.picking { cursor: crosshair; }
+.app.cprlab .cprlab-cb-stage.picking .cprlab-cb-col { opacity: 0.35; pointer-events: none; }
+
+.app.cprlab .cprlab-cb-gl {
+  display: flex;
+  align-items: baseline;
+  gap: 0.4rem;
+  margin: 0 0 0.3rem;
+  padding: 0 0 0.15rem;
+  border-bottom: 1px solid var(--sk-line);
+  color: var(--sk-muted);
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+.app.cprlab .cprlab-cb-gl small { margin-left: auto; font-weight: 400; letter-spacing: 0; }
+.app.cprlab .cprlab-cb-col[data-side="R"] .cprlab-cb-gl { flex-direction: row-reverse; }
+.app.cprlab .cprlab-cb-col[data-side="R"] .cprlab-cb-gl small { margin-left: 0; margin-right: auto; }
+.app.cprlab .cprlab-cb-none { color: var(--sk-muted); font-size: 0.75rem; font-style: italic; opacity: 0.7; }
+.app.cprlab .cprlab-cb-col[data-side="R"] .cprlab-cb-none { text-align: right; }
+
+/* Tiles (2077 slots): one row per foundational and its options, empty option slots dashed. */
+.app.cprlab .cprlab-cb-tiles { display: flex; flex-wrap: wrap; gap: 4px; margin-bottom: 4px; }
+.app.cprlab .cprlab-cb-col[data-side="L"] .cprlab-cb-tiles { justify-content: flex-end; }
+.app.cprlab .cprlab-cb-tile {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 42px;
+  height: 42px;
+  border: 1px solid var(--sk-line);
+  background: var(--sk-row-alt);
+  cursor: pointer;
+  clip-path: polygon(0 0, calc(100% - 7px) 0, 100% 7px, 100% 100%, 7px 100%, 0 calc(100% - 7px));
+}
+.app.cprlab .cprlab-cb-tile img { width: 28px; height: 28px; border: 0; pointer-events: none; }
+.app.cprlab .cprlab-cb-tile.found { width: 48px; height: 48px; border-color: color-mix(in srgb, var(--sk-accent) 55%, var(--sk-line)); }
+.app.cprlab .cprlab-cb-tile.found img { width: 33px; height: 33px; }
+.app.cprlab .cprlab-cb-tile.found::after { content: ""; position: absolute; left: 3px; top: 3px; width: 5px; height: 5px; background: var(--sk-accent); }
+.app.cprlab .cprlab-cb-tile.slot { border-style: dashed; background: transparent; cursor: default; }
+.app.cprlab .cprlab-cb-tile.slot::before { content: "+"; color: var(--sk-line); }
+.app.cprlab .cprlab-cb-tile:focus-visible { outline: 2px solid var(--sk-accent); outline-offset: -2px; }
+.app.cprlab .cprlab-cb-tile.selected { border-color: var(--sk-accent); }
+.app.cprlab .cprlab-cb-tile.hot {
+  border-color: var(--sk-accent);
+  background: color-mix(in srgb, var(--sk-accent) 18%, var(--sk-row-alt));
+  box-shadow: 0 0 0 1px var(--sk-accent) inset;
+}
+
+/* Rows: names, readable at a glance, each with its own line. */
+.app.cprlab .cprlab-cb-row {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  min-height: 1.6rem;
+  padding: 0 0.35rem;
+  border-left: 2px solid transparent;
+  font-size: 0.85rem;
+  cursor: pointer;
+}
+.app.cprlab .cprlab-cb-row img { width: 18px; height: 18px; border: 0; flex: none; }
+.app.cprlab .cprlab-cb-row .nm { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.app.cprlab .cprlab-cb-row.found { font-weight: 600; border-left-color: var(--sk-accent); background: var(--sk-row-alt); }
+.app.cprlab .cprlab-cb-row.opt { padding-left: 1.1rem; }
+.app.cprlab .cprlab-cb-row .nub { width: 5px; height: 5px; background: var(--sk-line); flex: none; }
+.app.cprlab .cprlab-cb-row .cprlab-slots i { width: 6px; height: 6px; }
+.app.cprlab .cprlab-cb-col[data-side="L"] .cprlab-cb-row .nub { order: 9; }
+.app.cprlab .cprlab-cb-col[data-side="R"] .cprlab-cb-row { flex-direction: row-reverse; border-left: 0; border-right: 2px solid transparent; }
+.app.cprlab .cprlab-cb-col[data-side="R"] .cprlab-cb-row .nm { text-align: right; }
+.app.cprlab .cprlab-cb-col[data-side="R"] .cprlab-cb-row.found { border-right-color: var(--sk-accent); }
+.app.cprlab .cprlab-cb-col[data-side="R"] .cprlab-cb-row.opt { padding-left: 0.35rem; padding-right: 1.1rem; }
+.app.cprlab .cprlab-cb-row.hot, .app.cprlab .cprlab-cb-row.selected { background: color-mix(in srgb, var(--sk-accent) 16%, transparent); }
+.app.cprlab .cprlab-cb-row.hot .nub { background: var(--sk-accent); }
+.app.cprlab .cprlab-cb-row:focus-visible { outline: 2px solid var(--sk-accent); outline-offset: -2px; }
+
+/* Placement picker banner. */
+.app.cprlab .cprlab-cb-pickbar {
+  display: none;
+  position: absolute;
+  z-index: 2;
+  top: 0.2rem;
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 0.2rem 0.8rem;
+  border-radius: 1rem;
+  background: var(--sk-accent);
+  color: var(--sk-accent-fg);
+  font-size: 0.8rem;
+  font-weight: 600;
+  white-space: nowrap;
+}
+.app.cprlab .cprlab-cb-pickbar small { margin-left: 0.5rem; font-weight: 400; opacity: 0.8; }
+.app.cprlab .cprlab-cb-stage.picking .cprlab-cb-pickbar { display: block; }
+
+/* Readout under the stage: the hovered (or selected) item, with its actions. */
+.app.cprlab .cprlab-cb-readouts { border-top: 1px solid var(--sk-line); padding-top: 0.5rem; min-height: 5.2rem; }
+.app.cprlab .cprlab-cb-read.hint { margin: 0.4rem 0.2rem; color: var(--sk-muted); font-size: 0.85rem; }
+.app.cprlab .cprlab-cb-read:not(.hint) { display: flex; gap: 0.75rem; align-items: flex-start; }
+.app.cprlab .cprlab-cb-read[hidden] { display: none !important; }
+.app.cprlab .cprlab-cb-read > img { width: 44px; height: 44px; border: 0; flex: none; }
+.app.cprlab .cprlab-cb-read .txt { flex: 1; min-width: 0; }
+.app.cprlab .cprlab-cb-read .tag { color: var(--sk-accent); font-size: 0.68rem; letter-spacing: 0.08em; text-transform: uppercase; }
+.app.cprlab .cprlab-cb-read h4 { margin: 0.05rem 0 0; font-size: 1.05rem; border: 0; }
+.app.cprlab .cprlab-cb-read .desc {
+  margin: 0.1rem 0 0;
+  color: var(--sk-muted);
+  font-size: 0.8rem;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+.app.cprlab .cprlab-cb-read .loc { margin-top: 0.2rem; font-size: 0.75rem; }
+.app.cprlab .cprlab-cb-read .loc i { color: var(--sk-accent); }
+.app.cprlab .cprlab-cb-read .loc span { color: var(--sk-muted); }
+.app.cprlab .cprlab-cb-read .side { display: flex; flex-direction: column; align-items: flex-end; gap: 0.3rem; flex: none; }
+.app.cprlab .cprlab-cb-read .hl { color: var(--sk-muted); font-size: 0.68rem; letter-spacing: 0.06em; text-transform: uppercase; text-align: right; }
+.app.cprlab .cprlab-cb-read .hl b { display: block; color: var(--sk-fg); font-size: 1rem; letter-spacing: 0; }

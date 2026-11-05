@@ -1,0 +1,289 @@
+{{!-- Carry control: Stashed / Carried / Equipped, icon-only and quiet until hovered. --}}
+{{#*inline "cprlabFightCarry"}}
+  {{#if equip}}
+    <span class="cprlab-fcarry" role="group" aria-label="{{carryLabel}}">
+      {{#each equip as |e|}}
+        <a class="cprlab-fcarry-seg seg-{{e.value}} {{#if e.active}}active{{/if}}" data-lab-fight-equip="{{e.value}}"
+           role="button" tabindex="0" aria-pressed="{{#if e.active}}true{{else}}false{{/if}}" aria-label="{{e.label}}"
+           data-tooltip="{{e.hint}}"><i class="{{e.icon}}"></i></a>
+      {{/each}}
+    </span>
+  {{else if source}}
+    <span class="cprlab-ftag">{{source}}</span>
+  {{/if}}
+{{/inline}}
+
+{{!-- Image + name (opens the item) + a sub line, shared by the full cards. --}}
+{{#*inline "cprlabFightHead"}}
+  <header class="cprlab-fcard-head">
+    <span class="cprlab-fcard-img">
+      <img src="{{img}}" alt=""/>
+      {{#if upgraded}}<i class="fa-solid fa-square-caret-up" data-tooltip="{{localize 'CPR.global.generic.upgraded'}}"></i>{{/if}}
+    </span>
+    <span class="cprlab-fcard-title">
+      <a class="item-edit cprlab-fcard-name" data-item-id="{{id}}"
+         data-tooltip="{{localize 'CPR.mookSheet.items.clickToViewItem'}}<br/>{{localize 'CPR.actorSheets.commonActions.ctrlClickToSendToChat'}}">{{name}}</a>
+      {{#if sub}}<span class="cprlab-fcard-sub">{{sub}}</span>{{/if}}
+    </span>
+    {{> cprlabFightCarry}}
+  </header>
+  {{#with (lookup @root.lab.gear.upkeep id) as |uk|}}
+    <div class="cprlab-uk-strip">
+      {{#each uk.tags as |t|}}<span class="cprlab-gtag {{t.cls}}" data-tooltip="{{t.tip}}" data-lab-upkeep role="button" tabindex="0"><i class="{{t.icon}}"></i> {{t.label}}</span>{{/each}}
+      {{#if uk.malfunction}}<span class="cprlab-uk-malftext">{{uk.malfunction}}</span>{{/if}}
+    </div>
+  {{/with}}
+  {{#if desc}}<p class="cprlab-fcard-desc" data-tooltip="{{desc}}">{{desc}}</p>{{/if}}
+{{/inline}}
+
+{{!-- Phantom card: a carried or stashed weapon/armor, ghosted, with one key stat. --}}
+{{#*inline "cprlabFightPhantom"}}
+  <div class="item cprlab-fghost state-{{state}}" data-item-id="{{id}}">
+    <img src="{{img}}" alt=""/>
+    <span class="cprlab-fghost-main">
+      <a class="item-edit cprlab-fghost-name" data-item-id="{{id}}" data-tooltip="{{#if desc}}{{desc}}{{else}}{{name}}{{/if}}">{{name}}</a>
+      <span class="cprlab-fghost-meta">
+        <span class="cprlab-fghost-state"><i class="{{stateIcon}}"></i> {{stateLabel}}</span>
+        <span class="cprlab-fghost-stat" {{#if statTip}}data-tooltip="{{statTip}}"{{/if}}><small>{{statLabel}}</small> <b>{{stat}}</b></span>
+      </span>
+    </span>
+    {{> cprlabFightCarry}}
+  </div>
+{{/inline}}
+
+<div class="cprlab-fight">
+  {{!-- The Meatspace/Netspace switch normally lives in the system's tab label. --}}
+  {{#if (cprCompare fightData.fightOptions "===" "both")}}
+    <div class="cprlab-toolbar">
+      {{#if (cprCompare fightData.fightState "===" "Meatspace")}}
+        <span class="cprlab-pill active">{{localize "CPR.characterSheet.bottomPane.fight.meat"}}</span>
+        <a class="cprlab-pill toggle-fight-state" data-state="Netspace">{{localize "CPR.characterSheet.bottomPane.fight.net"}}</a>
+      {{else}}
+        <a class="cprlab-pill toggle-fight-state" data-state="Meatspace">{{localize "CPR.characterSheet.bottomPane.fight.meat"}}</a>
+        <span class="cprlab-pill active">{{localize "CPR.characterSheet.bottomPane.fight.net"}}</span>
+      {{/if}}
+    </div>
+  {{/if}}
+
+  {{#if (cprCompare fightData.fightState "===" "Netspace")}}
+    <div class="fight-tab">
+      {{> "systems/cyberpunk-red-core/templates/actor/mixin/netrunning/cpr-netActions.hbs"}}
+      {{> "systems/cyberpunk-red-core/templates/actor/mixin/netrunning/cpr-installedPrograms.hbs"}}
+      {{> "systems/cyberpunk-red-core/templates/actor/mixin/netrunning/cpr-rezzedPrograms.hbs"}}
+    </div>
+  {{else}}
+    {{#with lab.fight as |f|}}
+
+    {{!-- Weapons: Ranged, then Melee. Equipped cards first, then carried and stashed phantoms. --}}
+    {{#if f.noWeapons}}
+      <section class="cprlab-fsec">
+        <header class="cprlab-fsec-head">
+          <h3 class="cprlab-fsec-title">{{f.text.weapons}}</h3>
+        </header>
+        <p class="cprlab-empty">{{f.text.noWeapons}}</p>
+      </section>
+    {{/if}}
+    {{#each f.weapons as |sec|}}
+      <section class="cprlab-fsec cprlab-fsec-{{sec.key}}">
+        <header class="cprlab-fsec-head">
+          <h3 class="cprlab-fsec-title">{{sec.label}}</h3>
+          <span class="cprlab-fsec-count" data-tooltip="{{f.text.equippedCount}}">{{sec.count}}/{{sec.total}}</span>
+        </header>
+        {{#if sec.cards.length}}
+          <div class="cprlab-fcards">
+            {{#each sec.cards as |c|}}
+              {{#with c.item as |weapon|}}
+              <article class="item cprlab-fcard cprlab-fweapon" data-item-id="{{c.id}}">
+                <header class="cprlab-fcard-head">
+                  <span class="cprlab-fcard-img">
+                    <img src="{{c.img}}" alt=""/>
+                    {{#if c.upgraded}}<i class="fa-solid fa-square-caret-up" data-tooltip="{{localize 'CPR.global.generic.upgraded'}}"></i>{{/if}}
+                  </span>
+                  <span class="cprlab-fcard-title">
+                    <a class="item-edit cprlab-fcard-name" data-item-id="{{c.id}}"
+                       data-tooltip="{{localize 'CPR.mookSheet.items.clickToViewItem'}}<br/>{{localize 'CPR.actorSheets.commonActions.ctrlClickToSendToChat'}}">{{c.name}}</a>
+                    <span class="cprlab-fcard-sub">
+                      {{#if weapon.system.isRanged}}
+                        {{#if weapon.system.hasAmmoLoaded}}
+                          {{#with weapon.system.loadedAmmo as |ammo|}}{{localize (cprFindConfigValue "ammoTypes" ammo.system.type)}}:{{/with}}
+                          <b>{{weapon.system.magazine.value}}</b>/{{cprApplyUpgrade weapon weapon.system.magazine.max "magazine"}}
+                        {{else}}
+                          <em>{{localize "CPR.mookSheet.items.unloaded"}}</em>
+                        {{/if}}
+                      {{else}}
+                        {{localize "CPR.global.itemType.skill.meleeWeapon"}}
+                      {{/if}}
+                    </span>
+                  </span>
+                  {{> cprlabFightCarry c}}
+                </header>
+                {{#with (lookup @root.lab.gear.upkeep c.id) as |uk|}}
+                  <div class="cprlab-uk-strip">
+                    {{#each uk.tags as |t|}}<span class="cprlab-gtag {{t.cls}}" data-tooltip="{{t.tip}}" data-lab-upkeep role="button" tabindex="0"><i class="{{t.icon}}"></i> {{t.label}}</span>{{/each}}
+                    {{#if uk.malfunction}}<span class="cprlab-uk-malftext">{{uk.malfunction}}</span>{{/if}}
+                  </div>
+                {{/with}}
+                {{#if c.desc}}<p class="cprlab-fcard-desc" data-tooltip="{{c.desc}}">{{c.desc}}</p>{{/if}}
+
+                <div class="cprlab-fcard-stats">
+                  <span class="text-pill">{{localize "CPR.itemSheet.weapon.rof"}} {{cprApplyUpgrade weapon weapon.system.rof "rof"}}</span>
+                  {{#if (cprCompare (cprApplyUpgrade weapon weapon.system.attackmod "weapon.attackmod") ">" "0")}}
+                    <span class="text-pill">+{{cprApplyUpgrade weapon weapon.system.attackmod "weapon.attackmod"}} {{localize "CPR.actorSheets.fightWeaponStats.toAttack"}}</span>
+                  {{else if (cprCompare (cprApplyUpgrade weapon weapon.system.attackmod "weapon.attackmod") "<" "0")}}
+                    <span class="text-pill">{{cprApplyUpgrade weapon weapon.system.attackmod "weapon.attackmod"}} {{localize "CPR.actorSheets.fightWeaponStats.toAttack"}}</span>
+                  {{/if}}
+                  {{#if (cprCompare (cprGetAmmoOverrideProp weapon.system.loadedAmmo "damage" "mode") "!==" "none")}}
+                    <span class="text-pill text-italic" data-tooltip="{{localize 'CPR.actorSheets.fightTab.ammoDamageOverrideTooltip'}}">{{localize "CPR.global.generic.damage"}} {{cprGetWeaponDamage weapon}}</span>
+                  {{else}}
+                    <span class="text-pill">{{localize "CPR.global.generic.damage"}} {{cprGetWeaponDamage weapon}}</span>
+                  {{/if}}
+                  {{#if weapon.system.hasAmmoLoaded}}
+                    {{#with weapon.system.loadedAmmo as |ammo|}}
+                      {{#if (cprCompare ammo.system.ablationValue "!==" 1)}}
+                        <span class="text-pill">{{localize "CPR.global.generic.ablation"}} {{ammo.system.ablationValue}}</span>
+                      {{/if}}
+                    {{/with}}
+                  {{/if}}
+                  {{#if (cprApplyUpgrade weapon weapon.system.handsReq "handsReq")}}
+                    <span class="text-pill">{{localize "CPR.actorSheets.fireModes.handsRequiredShort"}} {{cprApplyUpgrade weapon weapon.system.handsReq "handsReq"}}</span>
+                  {{/if}}
+                  {{#if weapon.system.isRanged}}
+                    <span class="cprlab-fcard-glyphs">
+                      {{> "systems/cyberpunk-red-core/templates/actor/mixin/actions/cpr-dv-glyph.hbs" weapon weapon=weapon isTokenSheet=@root.isTokenSheet}}
+                      {{> "systems/cyberpunk-red-core/templates/actor/mixin/actions/cpr-changeAmmo-glyph.hbs" weapon}}
+                      {{> "systems/cyberpunk-red-core/templates/actor/mixin/actions/cpr-reload-glyph.hbs" weapon}}
+                    </span>
+                  {{/if}}
+                </div>
+
+                {{!-- Fire modes: the system's fire-checkbox toggles. --}}
+                <ul class="cprlab-fmodes">
+                  <li>
+                    <a class="fire-checkbox" data-fire-mode="aimed" data-item-id="{{c.id}}" role="checkbox"
+                       aria-checked="{{#if (cprFireMode @root.actor 'aimed' c.id)}}true{{else}}false{{/if}}">
+                      <i class="far {{#if (cprFireMode @root.actor 'aimed' c.id)}}fa-circle-dot{{else}}fa-circle{{/if}}"></i>
+                      {{localize "CPR.actorSheets.fireModes.aim"}}
+                    </a>
+                  </li>
+                  {{#if (cprCompare weapon.system.fireModes.autoFire ">" 0)}}
+                    <li>
+                      <a class="fire-checkbox" data-fire-mode="autofire" data-item-id="{{c.id}}" role="checkbox"
+                         aria-checked="{{#if (cprFireMode @root.actor 'autofire' c.id)}}true{{else}}false{{/if}}"
+                         {{#if (cprCompare (cprGetAmmoOverrideProp weapon.system.loadedAmmo "autofire" "mode") "!==" "none")}}data-tooltip="{{localize 'CPR.actorSheets.fightTab.ammoAutofireOverrideTooltip'}}"{{/if}}>
+                        <i class="far {{#if (cprFireMode @root.actor 'autofire' c.id)}}fa-circle-dot{{else}}fa-circle{{/if}}"></i>
+                        {{localize "CPR.actorSheets.fireModes.autoFire"}} ({{cprGetWeaponAutofireMax weapon}})
+                      </a>
+                    </li>
+                  {{/if}}
+                  {{#if weapon.system.fireModes.suppressiveFire}}
+                    <li>
+                      <a class="fire-checkbox" data-fire-mode="suppressive" data-item-id="{{c.id}}" role="checkbox"
+                         aria-checked="{{#if (cprFireMode @root.actor 'suppressive' c.id)}}true{{else}}false{{/if}}">
+                        <i class="far {{#if (cprFireMode @root.actor 'suppressive' c.id)}}fa-circle-dot{{else}}fa-circle{{/if}}"></i>
+                        {{localize "CPR.actorSheets.fireModes.suppressiveFireShort"}}
+                      </a>
+                    </li>
+                  {{/if}}
+                </ul>
+
+                <div class="cprlab-fcard-rolls">
+                  <a class="rollable cprlab-fattack" data-roll-type="attack" data-item-id="{{c.id}}" data-tooltip="{{f.text.attackHint}}">
+                    <i class="fas fa-hand-fist"></i> {{f.text.attack}}
+                  </a>
+                  {{#if (cprCompare (cprFireFlag @root.actor "suppressive" c.id) "!==" "checked")}}
+                    <a class="rollable cprlab-fdamage damage-roll-{{c.id}}" data-roll-type="damage" data-item-id="{{c.id}}"
+                       data-damage="{{weapon.system.damage}}" data-tooltip="{{f.text.damageHint}}">
+                      <i class="fas fa-droplet"></i> {{f.text.damage}}
+                    </a>
+                  {{/if}}
+                  {{#if c.grenadeTip}}
+                    <a class="cprlab-grenade cprlab-fgrenade" data-action="fire" data-tooltip="{{c.grenadeTip}}">
+                      <i class="fas fa-bomb"></i> {{f.text.grenadeFire}}
+                    </a>
+                  {{/if}}
+                </div>
+              </article>
+              {{/with}}
+            {{/each}}
+          </div>
+        {{/if}}
+        {{#if sec.phantoms.length}}
+          <div class="cprlab-fghosts">
+            {{#each sec.phantoms}}{{> cprlabFightPhantom}}{{/each}}
+          </div>
+        {{/if}}
+      </section>
+    {{/each}}
+
+    <div class="cprlab-fight-lower">
+      {{!-- Armor: equipped cards with SP per location, ablate and tracking; then phantoms. --}}
+      <section class="cprlab-fsec cprlab-fsec-armor">
+        <header class="cprlab-fsec-head">
+          <h3 class="cprlab-fsec-title">{{f.text.armor}}</h3>
+          {{#if f.armor.total}}<span class="cprlab-fsec-count" data-tooltip="{{f.text.equippedCount}}">{{f.armor.count}}/{{f.armor.total}}</span>{{/if}}
+        </header>
+        {{#unless f.armor.total}}<p class="cprlab-empty">{{f.text.noArmor}}</p>{{/unless}}
+        {{#each f.armor.cards as |c|}}
+          <article class="item cprlab-fcard cprlab-farmor" data-item-id="{{c.id}}">
+            {{> cprlabFightHead c}}
+            <ul class="cprlab-farmor-locs">
+              {{#each c.locations as |l|}}
+                <li class="cprlab-farmor-loc {{#if l.tracked}}tracked{{/if}} {{#if l.low}}low{{/if}}">
+                  <span class="lbl">{{l.label}}</span>
+                  <span class="val"><b>{{l.value}}</b>/{{l.max}} <small>{{l.type}}</small></span>
+                  <i class="bar" aria-hidden="true"><i style="width:{{l.bar}}%"></i></i>
+                  {{#if l.tracked}}
+                    <a class="ablate cprlab-act" data-location="{{l.key}}" data-tooltip="{{l.ablateTip}}" aria-label="{{l.ablateTip}}"><i class="far fa-circle-down"></i></a>
+                    <a class="armor-current-track cprlab-act on" data-location="{{l.key}}" data-item-id="{{c.id}}" data-tooltip="{{l.trackTip}}" aria-label="{{l.trackTip}}"><i class="fas fa-star"></i></a>
+                  {{else}}
+                    <span class="cprlab-act disabled" data-tooltip="{{localize 'CPRSKIN.lab.gear.untrackedHint'}}"><i class="far fa-circle-down"></i></span>
+                    <a class="armor-current-untrack cprlab-act" data-location="{{l.key}}" data-item-id="{{c.id}}" data-tooltip="{{l.trackTip}}" aria-label="{{l.trackTip}}"><i class="far fa-star"></i></a>
+                  {{/if}}
+                </li>
+              {{/each}}
+            </ul>
+          </article>
+        {{/each}}
+        {{#if f.armor.phantoms.length}}
+          <div class="cprlab-fghosts">
+            {{#each f.armor.phantoms}}{{> cprlabFightPhantom}}{{/each}}
+          </div>
+        {{/if}}
+      </section>
+
+      {{!-- Critical injuries: roll and create in the header, like the system. --}}
+      <section class="cprlab-fsec cprlab-fsec-injuries">
+        <header class="cprlab-fsec-head">
+          <h3 class="cprlab-fsec-title">{{f.text.injuries}}</h3>
+          {{#if f.injuries.length}}<span class="cprlab-fsec-count">{{f.injuries.length}}</span>{{/if}}
+          <span class="cprlab-fsec-actions">
+            <a class="roll-critical-injury cprlab-act" data-item-type="criticalInjury" data-tooltip="{{f.text.rollInjury}}" aria-label="{{f.text.rollInjury}}"><i class="fas fa-dice"></i></a>
+            {{#if f.canCreate}}
+              <a class="item-create cprlab-act" data-item-type="criticalInjury" data-tooltip="{{f.text.createInjury}}" aria-label="{{f.text.createInjury}}"><i class="fas fa-plus"></i></a>
+            {{/if}}
+          </span>
+        </header>
+        {{#unless f.injuries.length}}<p class="cprlab-empty">{{f.text.noInjuries}}</p>{{/unless}}
+        <ul class="cprlab-finjuries">
+          {{#each f.injuries as |i|}}
+            <li class="item cprlab-finjury" data-item-id="{{i.id}}">
+              <img src="{{i.img}}" alt=""/>
+              <span class="cprlab-finjury-main">
+                <a class="item-edit cprlab-finjury-name" data-item-id="{{i.id}}" data-tooltip="{{#if i.desc}}{{i.desc}}{{else}}{{f.text.open}}{{/if}}">{{i.name}}</a>
+                {{#if i.hasTags}}
+                  <span class="cprlab-finjury-tags">
+                    {{#if i.deathSave}}<span class="cprlab-ftag warn"><i class="fas fa-skull"></i> {{f.text.deathSave}}</span>{{/if}}
+                    {{#each i.effects as |e|}}<span class="cprlab-ftag">{{e}}</span>{{/each}}
+                  </span>
+                {{/if}}
+              </span>
+              <a class="item-action cprlab-act danger" data-action-type="delete" data-item-id="{{i.id}}" data-item-category="{{i.type}}"
+                 data-tooltip="{{f.text.delete}}" aria-label="{{f.text.delete}}"><i class="fas fa-trash-can"></i></a>
+            </li>
+          {{/each}}
+        </ul>
+      </section>
+    </div>
+    {{/with}}
+  {{/if}}
+</div>

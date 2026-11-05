@@ -1,0 +1,112 @@
+{{#*inline "cprlabGearAct"}}
+  {{#if disabled}}
+    <span class="cprlab-act disabled" data-tooltip="{{tip}}"><i class="{{icon}}"></i></span>
+  {{else}}
+    <a class="cprlab-act {{cls}} {{#if on}}on{{/if}} {{#if danger}}danger{{/if}} {{#if strong}}strong{{/if}}"
+       {{#if actionType}}data-action-type="{{actionType}}"{{/if}}
+       {{#if action}}data-action="{{action}}"{{/if}}
+       {{#if prop}}data-item-prop="{{prop}}"{{/if}}
+       {{#if parent}}data-direct-parent="{{parent}}"{{/if}}
+       {{#if location}}data-location="{{location}}"{{/if}}
+       data-tooltip="{{tip}}"><i class="{{icon}}"></i>{{#if label}}<span>{{label}}</span>{{/if}}</a>
+  {{/if}}
+{{/inline}}
+<div class="cprlab-gear">
+  <div class="cprlab-toolbar cprlab-gear-toolbar">
+    <span class="cprlab-toolbar-label">{{lab.gear.text.show}}</span>
+    {{#each lab.gear.showPills as |p|}}
+      <a class="cprlab-pill {{p.cls}} {{#if p.active}}active{{/if}}" data-lab-gear-show="{{p.value}}" {{#if p.hint}}data-tooltip="{{p.hint}}"{{/if}}>
+        {{#if p.icon}}<i class="{{p.icon}}"></i> {{/if}}{{p.label}}{{#if p.icon}} <span class="cprlab-pill-count">{{p.count}}</span>{{/if}}
+      </a>
+    {{/each}}
+  </div>
+
+  {{#if lab.gear.none}}<p class="cprlab-empty">{{lab.gear.text.nothing}}</p>{{/if}}
+
+  {{#each lab.gear.sections as |sec|}}
+    <section class="cprlab-gear-cat collapsible" data-category="{{sec.type}}">
+      <header class="cprlab-gear-head">
+        <a class="expand-button cprlab-gear-title" id="{{sec.id}}" data-tooltip="{{localize 'CPR.actorSheets.commonActions.toggleCategoryPinned'}}">
+          <i class="fas fa-chevron-right collapse-icon {{#unless sec.collapsed}}hide{{/unless}}"></i>
+          <i class="fas fa-chevron-down expand-icon {{#if sec.collapsed}}hide{{/if}}"></i>
+          <span>{{sec.label}}</span>
+          <span class="cprlab-count">{{sec.count}}</span>
+        </a>
+        {{#if @root.lab.gear.canCreate}}
+          <a class="item-create cprlab-act" data-item-type="{{sec.type}}" data-tooltip="{{localize 'CPR.actorSheets.commonActions.createNewItem'}}"><i class="fas fa-plus"></i></a>
+        {{/if}}
+      </header>
+      <ol class="cprlab-gear-list">
+        {{#each sec.rows as |r|}}
+          <li class="item cprlab-gear-row state-{{r.state}} type-{{r.type}} {{#if r.favorite}}favorite{{/if}} {{#if r.hidden}}hide{{/if}} {{#if r.ukTags.length}}has-uk{{/if}}"
+              data-item-id="{{r.id}}" data-item-category="{{r.type}}" draggable="true">
+            <a class="item-edit cprlab-gear-name" {{#if r.desc}}data-tooltip="{{r.desc}}"{{/if}}>
+              <img src="{{r.img}}" alt=""/>
+              <span class="nm">{{r.name}}</span>
+              {{#if r.upgraded}}<i class="fa-solid fa-square-caret-up up" data-tooltip="{{localize 'CPR.global.generic.upgraded'}}"></i>{{/if}}
+              {{#if r.favorite}}<i class="fas fa-thumbtack pin"></i>{{/if}}
+            </a>
+            <span class="cprlab-gear-stats">
+              {{#if r.stackable}}
+                <span class="cprlab-gear-amount"><span class="x">&times;</span><input class="gear-amount-input" type="number" data-item-prop="item.system.amount" value="{{r.amount}}"/></span>
+              {{/if}}
+              {{#each r.tags as |t|}}
+                <span class="cprlab-gtag {{t.cls}}" {{#if t.tip}}data-tooltip="{{t.tip}}"{{/if}} {{#if t.upkeep}}data-lab-upkeep role="button" tabindex="0"{{/if}}>{{#if t.icon}}<i class="{{t.icon}}"></i> {{/if}}{{t.label}}</span>
+              {{/each}}
+              {{#each r.stats as |s|}}
+                {{#if s.mag}}<span class="cprlab-gv-mag">{{#each s.before}}{{> cprlabGearAct}}{{/each}}{{/if}}
+                <span class="cprlab-gv {{s.cls}}" {{#if s.tip}}data-tooltip="{{s.tip}}"{{/if}}>
+                  {{#if s.label}}<small>{{s.label}}</small>{{/if}}<b>{{s.value}}</b>
+                  {{#if s.bar}}<i class="bar"><i style="width:{{s.bar}}%"></i></i>{{/if}}
+                </span>
+                {{#if s.mag}}{{#each s.after}}{{> cprlabGearAct}}{{/each}}</span>{{/if}}
+              {{/each}}
+            </span>
+            <span class="cprlab-equip">
+              {{#if r.equip}}
+                {{#each r.equip as |e|}}
+                  <a class="cprlab-equip-seg {{#if e.active}}active{{/if}} seg-{{e.value}}" data-lab-equip="{{e.value}}" data-tooltip="{{e.hint}}" aria-pressed="{{#if e.active}}true{{else}}false{{/if}}">
+                    <i class="{{e.icon}}"></i><span>{{e.label}}</span>
+                  </a>
+                {{/each}}
+              {{else if r.grenade}}
+                {{#with r.grenade}}{{> cprlabGearAct}}{{/with}}
+              {{/if}}
+            </span>
+            <span class="cprlab-gear-upkeep">
+              {{#if r.ukTags.length}}<span class="cprlab-uk-col">{{#each r.ukTags as |t|}}<i class="{{t.cls}} {{t.icon}}" data-tooltip="{{t.tip}}" data-lab-upkeep role="button" tabindex="0"></i>{{/each}}</span>{{/if}}
+              {{#if r.upkeep}}{{#with r.upkeep}}{{> cprlabGearAct}}{{/with}}{{/if}}
+            </span>
+            <span class="cprlab-gear-actions">
+              {{#if r.grenadeFire}}{{#with r.grenadeFire}}{{> cprlabGearAct}}{{/with}}{{/if}}
+              {{#each r.actions}}{{> cprlabGearAct}}{{/each}}
+            </span>
+            {{#if r.installed.length}}
+              <div class="cprlab-gear-installed">
+                {{#if r.upgrades}}{{#with r.upgrades}}{{> cprlabGearAct}}{{/with}}{{/if}}
+                <span class="lbl">{{localize "CPR.global.generic.installedItems"}}</span>
+                {{#each r.installed as |c|}}
+                  <span class="cprlab-gchip" data-item-id="{{c.id}}">
+                    <a class="item-view" data-item-id="{{c.id}}"><small>{{c.typeLabel}}</small> {{c.name}}</a>
+                    {{#each c.tags as |t|}}<span class="cprlab-gtag {{t.cls}}" data-tooltip="{{t.tip}}" data-lab-upkeep role="button" tabindex="0"><i class="{{t.icon}}"></i> {{t.label}}</span>{{/each}}
+                    <a class="uninstall-single-item" data-item-id="{{c.id}}" data-direct-parent="{{c.parent}}"
+                       data-tooltip="{{localize 'CPR.actorSheets.commonActions.uninstall'}}"><i class="fas {{c.icon}}"></i></a>
+                  </span>
+                {{/each}}
+              </div>
+            {{/if}}
+          </li>
+        {{/each}}
+      </ol>
+    </section>
+  {{/each}}
+
+  {{#if lab.gear.empty.length}}
+    <div class="cprlab-gear-emptycats" data-tooltip="{{lab.gear.text.addEmptyHint}}">
+      <span class="cprlab-toolbar-label">{{lab.gear.text.addEmpty}}</span>
+      {{#each lab.gear.empty as |e|}}
+        <a class="item-create cprlab-pill" data-item-type="{{e.type}}"><i class="fas fa-plus"></i> {{e.label}}</a>
+      {{/each}}
+    </div>
+  {{/if}}
+</div>

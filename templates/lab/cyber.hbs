@@ -1,0 +1,84 @@
+{{#*inline "cprlabCyberAct"}}
+  <a class="cprlab-act {{cls}} {{#if on}}on{{/if}} {{#if danger}}danger{{/if}} {{#if strong}}strong{{/if}}"
+     {{#if actionType}}data-action-type="{{actionType}}"{{/if}}
+     {{#if prop}}data-item-prop="{{prop}}"{{/if}}
+     {{#if parent}}data-direct-parent="{{parent}}"{{/if}}
+     data-tooltip="{{tip}}"><i class="{{icon}}"></i></a>
+{{/inline}}
+{{#*inline "cprlabSlots"}}
+  {{#if pips}}
+    <span class="cprlab-slots" data-tooltip="{{tip}}">{{#each pips}}<i class="{{#if full}}full{{/if}}"></i>{{/each}}<small>{{used}}/{{max}}</small></span>
+  {{else}}
+    <span class="cprlab-slots" data-tooltip="{{tip}}"><small>{{used}}/{{max}}</small></span>
+  {{/if}}
+{{/inline}}
+{{#*inline "cprlabCyberRow"}}
+  <li class="item cprlab-cyber-row depth-{{depth}} {{#if foundational}}foundation{{/if}} {{#if other}}other{{/if}} {{#unless installed}}uninstalled{{/unless}}"
+      data-item-id="{{id}}" {{#if installationId}}data-installation-id="{{installationId}}"{{/if}} data-item-category="cyberware">
+    <a class="{{#if installed}}item-view{{else}}item-edit{{/if}} cprlab-cyber-name" style="padding-left:{{indent}}rem" {{#if desc}}data-tooltip="{{desc}}"{{/if}}>
+      {{#if depth}}<i class="fa-solid fa-turn-up fa-rotate-90 branch"></i>{{/if}}
+      <img src="{{img}}" alt=""/>
+      <span class="nm">{{name}}</span>
+      {{#if upgraded}}<i class="fa-solid fa-square-caret-up up" data-tooltip="{{localize 'CPR.global.generic.upgraded'}}"></i>{{/if}}
+    </a>
+    <span class="cprlab-cyber-type">{{#if other}}<span class="cprlab-gtag">{{typeLabel}}</span>{{else}}{{#unless installed}}{{typeLabel}}{{/unless}}{{/if}}
+      {{#each tags as |t|}}<span class="cprlab-gtag {{t.cls}}" data-tooltip="{{t.tip}}" data-lab-upkeep role="button" tabindex="0"><i class="{{t.icon}}"></i> {{t.label}}</span>{{/each}}</span>
+    <span class="cprlab-cyber-slots">{{#if slots}}{{> cprlabSlots slots}}{{/if}}</span>
+    <span class="cprlab-gear-actions">{{#each actions}}{{> cprlabCyberAct}}{{/each}}</span>
+  </li>
+{{/inline}}
+<div class="cprlab-cyber">
+  <div class="cprlab-toolbar cprlab-cyber-toolbar">
+    <span class="cprlab-toolbar-label">{{localize "CPR.global.generic.installed"}}</span>
+    <span class="cprlab-gear-sp"><b>{{lab.gear.cyber.installedCount}}</b></span>
+    <span class="cprlab-toolbar-label">{{lab.gear.cyber.text.capReduction}}</span>
+    <span class="cprlab-gear-sp" data-tooltip="{{lab.gear.cyber.text.capReductionHint}}"><b>{{#if lab.gear.cyber.capReduction}}−{{/if}}{{lab.gear.cyber.capReduction}}</b></span>
+    <span class="cprlab-spacer"></span>
+    <span class="cprlab-toolbar-label">{{localize "CPRSKIN.lab.cyberBody.view"}}</span>
+    {{#each (cprskinChoices "cyberView")}}
+      <a class="cprlab-pill {{#if active}}active{{/if}}" data-lab-pref="cyberView" data-lab-value="{{value}}">{{label}}</a>
+    {{/each}}
+    {{#if lab.is.cyberView_body}}
+      {{#each (cprskinChoices "cyberItems")}}
+        <a class="cprlab-pill {{#if active}}active{{/if}}" data-lab-pref="cyberItems" data-lab-value="{{value}}">{{label}}</a>
+      {{/each}}
+    {{/if}}
+    {{#if lab.gear.cyber.canCreate}}
+      <a class="item-create cprlab-pill" data-item-type="cyberware" data-tooltip="{{localize 'CPR.actorSheets.commonActions.createNewItem'}}"><i class="fas fa-plus"></i> {{localize "CPR.global.itemTypes.cyberware"}}</a>
+    {{/if}}
+  </div>
+
+  {{#if lab.is.cyberView_body}}
+    {{> "modules/cpr-sheet-skin/templates/lab/cyber-body.hbs"}}
+  {{else}}
+  {{#unless lab.gear.cyber.groups.length}}<p class="cprlab-empty">{{lab.gear.cyber.text.none}}</p>{{/unless}}
+
+  <div class="cprlab-cyber-groups">
+    {{#each lab.gear.cyber.groups as |g|}}
+      <section class="cprlab-cyber-group" data-cyber-type="{{g.type}}">
+        <h3 class="cprlab-group-title static">
+          <span>{{g.label}}</span>
+          {{#if g.slots}}{{> cprlabSlots g.slots}}{{/if}}
+          <span class="cprlab-count">{{g.rows.length}}</span>
+        </h3>
+        <ol class="cprlab-cyber-list">
+          {{#each g.rows}}{{> cprlabCyberRow}}{{/each}}
+        </ol>
+      </section>
+    {{/each}}
+  </div>
+  {{/if}}
+
+  {{#if lab.gear.cyber.uninstalled.length}}
+    <section class="cprlab-cyber-group cprlab-cyber-loose">
+      <h3 class="cprlab-group-title static">
+        <i class="fa-solid fa-box-open"></i>
+        <span>{{lab.gear.cyber.text.notInstalled}}</span>
+        <span class="cprlab-count">{{lab.gear.cyber.uninstalled.length}}</span>
+      </h3>
+      <ol class="cprlab-cyber-list">
+        {{#each lab.gear.cyber.uninstalled}}{{> cprlabCyberRow}}{{/each}}
+      </ol>
+    </section>
+  {{/if}}
+</div>

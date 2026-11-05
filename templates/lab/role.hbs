@@ -1,0 +1,139 @@
+<div class="cprlab-roles view-{{lab.prefs.role}}">
+  {{#unless lab.roles.length}}
+    <p class="cprlab-empty">{{localize "CPR.characterSheet.bottomPane.role.noRolesWarning"}}</p>
+  {{/unless}}
+
+  {{#each lab.roles as |role|}}
+    <article class="cprlab-role-card">
+      <header class="cprlab-role-head item" data-item-id="{{role.id}}">
+        <img src="{{role.img}}" alt=""/>
+        <div class="cprlab-role-title">
+          <a class="item-edit">{{role.name}}</a>
+        </div>
+        <a class="item-action cprlab-icon-btn" data-action-type="delete" data-tooltip="{{localize 'CPR.actorSheets.commonActions.deleteItem'}}"><i class="fas fa-trash-can"></i></a>
+      </header>
+
+      {{#if role.description}}<div class="cprlab-role-desc">{{{role.description}}}</div>{{/if}}
+
+      <div class="cprlab-ability main item" data-item-id="{{role.id}}">
+        <div class="ab-head">
+          <span class="ab-name">{{role.main.label}}</span>
+          {{#if role.main.mod}}<span class="ab-mod {{#if role.main.situational}}situational{{/if}}">{{numberFormat role.main.mod sign=true}}</span>{{/if}}
+          <label class="ab-rank">{{localize "CPR.characterSheet.bottomPane.role.rank"}}
+            <input class="number ability-input" value="{{role.rank}}" data-role-name="{{role.name}}" data-ability-name="{{role.main.name}}" type="number"/>
+          </label>
+          {{#if role.main.hasRoll}}
+            <a class="rollable ab-roll" data-roll-type="roleAbility" data-roll-subtype="mainRoleAbility" data-roll-title="{{role.main.name}}"
+               data-tooltip="{{localize 'CPRSKIN.lab.role.roll'}}: {{role.main.label}}" aria-label="{{localize 'CPRSKIN.lab.role.roll'}}: {{role.main.label}}">
+              <i class="fa-solid fa-dice-d10"></i></a>
+          {{else}}
+            <span class="ab-roll-gap"></span>
+          {{/if}}
+        </div>
+        <div class="ab-note">
+          <p>{{#if role.main.note}}{{role.main.note}}{{else}}<em>{{localize "CPRSKIN.lab.role.noNote"}}</em>{{/if}}</p>
+          <a class="cprlab-icon-btn" data-lab-edit-note="{{role.main.name}}" data-tooltip="{{localize 'CPRSKIN.lab.role.edit'}}"><i class="fa-solid fa-pen"></i></a>
+          {{#if role.main.custom}}<span class="cprlab-tag">{{localize "CPRSKIN.lab.role.custom"}}</span>{{/if}}
+        </div>
+      </div>
+
+      {{#if role.abilities.length}}
+        <div class="cprlab-subabilities">
+          {{#each role.abilities as |ab|}}
+            <div class="cprlab-ability item" data-item-id="{{role.id}}">
+              <div class="ab-head">
+                <span class="ab-name">{{ab.label}}</span>
+                {{#if ab.ratio}}
+                  <span class="ab-ratio" data-tooltip="{{localize 'CPRSKIN.lab.role.ratio'}}">+{{ab.bonus}} <small>({{ab.ratio}}:1)</small></span>
+                {{/if}}
+                {{#if ab.mod}}<span class="ab-mod {{#if ab.situational}}situational{{/if}}">{{numberFormat ab.mod sign=true}}</span>{{/if}}
+                <label class="ab-rank">
+                  <input class="number ability-input" value="{{ab.rank}}" data-role-name="{{role.roleRef}}"
+                         data-ability-name="{{role.main.name}}" data-subskill-name="{{ab.name}}" type="number"/>
+                </label>
+                {{#if ab.hasRoll}}
+                  <a class="rollable ab-roll" data-roll-type="roleAbility" data-roll-subtype="subRoleAbility" data-roll-title="{{ab.name}}"
+                     data-tooltip="{{localize 'CPRSKIN.lab.role.roll'}}: {{ab.label}}" aria-label="{{localize 'CPRSKIN.lab.role.roll'}}: {{ab.label}}">
+                    <i class="fa-solid fa-dice-d10"></i></a>
+                {{else}}
+                  <span class="ab-roll-gap"></span>
+                {{/if}}
+              </div>
+              <div class="ab-note">
+                <p>{{#if ab.note}}{{ab.note}}{{else}}<em>{{localize "CPRSKIN.lab.role.noNote"}}</em>{{/if}}</p>
+                <a class="cprlab-icon-btn" data-lab-edit-note="{{ab.name}}" data-tooltip="{{localize 'CPRSKIN.lab.role.edit'}}"><i class="fa-solid fa-pen"></i></a>
+                {{#if ab.custom}}<span class="cprlab-tag">{{localize "CPRSKIN.lab.role.custom"}}</span>{{/if}}
+              </div>
+            </div>
+          {{/each}}
+        </div>
+      {{/if}}
+
+      {{!-- Exec: team members, one more slot at Rank 3, 5 and 9. --}}
+      {{#if role.team}}
+        <section class="cprlab-team" data-item-id="{{role.id}}">
+          <h3 class="cprlab-team-title">{{localize "CPRSKIN.lab.team.title"}} <small>{{role.team.open}}/3</small></h3>
+          <div class="cprlab-team-slots">
+            {{#each role.team.slots as |slot|}}
+              <div class="cprlab-team-slot {{#if slot.open}}open{{else}}locked{{/if}} {{#if slot.filled}}filled{{/if}}"
+                   data-lab-team-slot="{{slot.index}}" {{#if slot.uuid}}data-uuid="{{slot.uuid}}"{{/if}}>
+                {{#if slot.filled}}
+                  <div class="team-head">
+                    <a class="team-portrait" data-lab-team-open
+                       data-tooltip="{{#if slot.missing}}{{localize 'CPRSKIN.lab.team.missing'}}{{else}}{{localize 'CPRSKIN.lab.team.open'}}{{/if}}">
+                      <img src="{{slot.img}}" alt=""/></a>
+                    <div class="team-info">
+                      <a class="team-name {{#if slot.missing}}missing{{/if}}" data-lab-team-open>{{slot.name}}</a>
+                      <input type="text" class="team-role" data-lab-team-role value="{{slot.role}}"
+                             placeholder="{{localize 'CPRSKIN.lab.team.rolePlaceholder'}}" aria-label="{{localize 'CPRSKIN.lab.team.role'}}"
+                             {{#unless slot.editable}}disabled{{/unless}}/>
+                    </div>
+                    {{#if slot.editable}}
+                      <a class="cprlab-icon-btn team-remove" data-lab-team-remove data-tooltip="{{localize 'CPRSKIN.lab.team.remove'}}"><i class="fa-solid fa-user-minus"></i></a>
+                    {{/if}}
+                  </div>
+                  <div class="team-foot {{#if slot.loyal}}loyal{{/if}}">
+                    {{#if slot.loyal}}
+                      <span class="team-loyal"><i class="fa-solid fa-handshake"></i> {{localize "CPRSKIN.lab.team.loyal"}}</span>
+                    {{else}}
+                      <span class="team-loyalty-label">{{localize "CPRSKIN.lab.team.loyalty"}}</span>
+                    {{/if}}
+                    {{#if slot.gm}}
+                      <a class="team-loyal-toggle {{#if slot.loyal}}active{{/if}}" data-lab-team-loyal
+                         data-tooltip="{{#if slot.loyal}}{{localize 'CPRSKIN.lab.team.loyalOff'}}{{else}}{{localize 'CPRSKIN.lab.team.loyalOn'}}{{/if}}"
+                         aria-pressed="{{#if slot.loyal}}true{{else}}false{{/if}}"><i class="fa-solid fa-user-shield"></i></a>
+                    {{/if}}
+                    {{#unless slot.loyal}}
+                    <div class="team-stepper">
+                      {{#if slot.editable}}<a data-lab-loyalty-step="-1" data-tooltip="{{localize 'CPRSKIN.lab.team.loyaltyDown'}}" aria-label="{{localize 'CPRSKIN.lab.team.loyaltyDown'}}"><i class="fa-solid fa-minus"></i></a>{{/if}}
+                      <input type="number" class="team-loyalty-value" data-lab-loyalty value="{{slot.loyalty}}" min="-10" max="10" step="1"
+                             aria-label="{{localize 'CPRSKIN.lab.team.loyalty'}}" {{#unless slot.editable}}disabled{{/unless}}/>
+                      {{#if slot.editable}}<a data-lab-loyalty-step="1" data-tooltip="{{localize 'CPRSKIN.lab.team.loyaltyUp'}}" aria-label="{{localize 'CPRSKIN.lab.team.loyaltyUp'}}"><i class="fa-solid fa-plus"></i></a>{{/if}}
+                    </div>
+                    {{#if slot.editable}}
+                      <a class="sk-dice team-roll" data-lab-loyalty-roll data-tooltip="{{localize 'CPRSKIN.lab.team.loyaltyRoll'}}" aria-label="{{localize 'CPRSKIN.lab.team.loyaltyRoll'}}">
+                        <i class="fa-solid fa-dice-d10"></i></a>
+                    {{/if}}
+                    {{/unless}}
+                  </div>
+                {{else if slot.open}}
+                  <span class="team-empty"><i class="fa-solid fa-user-plus"></i> {{localize "CPRSKIN.lab.team.drop"}}</span>
+                {{else}}
+                  <span class="team-empty"><i class="fa-solid fa-lock"></i> {{localize "CPRSKIN.lab.team.locked" rank=slot.unlock}}</span>
+                {{/if}}
+              </div>
+            {{/each}}
+          </div>
+        </section>
+      {{/if}}
+    </article>
+  {{/each}}
+
+  {{!-- View switch, under the role card(s). --}}
+  <div class="cprlab-toolbar cprlab-roles-view">
+    <span class="cprlab-toolbar-label">{{localize "CPRSKIN.lab.role.view"}}</span>
+    {{#each (cprskinChoices "role")}}
+      <a class="cprlab-pill {{#if active}}active{{/if}}" data-lab-pref="role" data-lab-value="{{value}}">{{label}}</a>
+    {{/each}}
+  </div>
+</div>

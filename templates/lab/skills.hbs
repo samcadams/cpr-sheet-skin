@@ -1,0 +1,63 @@
+<div class="cprlab-skills view-{{lab.prefs.skills}}">
+  <div class="cprlab-toolbar">
+    <span class="cprlab-toolbar-label">{{localize "CPRSKIN.lab.skills.view"}}</span>
+    {{#each (cprskinChoices "skills")}}
+      <a class="cprlab-pill {{#if active}}active{{/if}}" data-lab-pref="skills" data-lab-value="{{value}}">{{label}}</a>
+    {{/each}}
+    <span class="cprlab-toolbar-label">{{localize "CPRSKIN.lab.skills.group"}}</span>
+    {{#each (cprskinChoices "skillGroup")}}
+      <a class="cprlab-pill {{#if active}}active{{/if}}" data-lab-pref="skillGroup" data-lab-value="{{value}}">{{label}}</a>
+    {{/each}}
+    <span class="cprlab-spacer"></span>
+    <a class="cprlab-pill {{#if lab.is.hideZero_hide}}active{{/if}}" data-lab-pref="hideZero"
+       data-lab-value="{{#if lab.is.hideZero_hide}}show{{else}}hide{{/if}}">{{localize "CPRSKIN.lab.skills.hideZero"}}</a>
+  </div>
+
+  <p class="cprlab-empty cprlab-skill-none" {{#if lab.skills.count}}hidden{{/if}}>{{localize "CPRSKIN.lab.skills.none"}}</p>
+
+  <div class="cprlab-skill-groups">
+    {{#each lab.skills.groups as |group|}}
+      <section class="cprlab-skill-group {{#if group.collapsed}}collapsed{{/if}} {{#if (eq group.key 'pinned')}}pinned{{/if}}">
+        <h3 class="cprlab-group-title" data-lab-group-toggle="{{group.key}}">
+          <i class="fa-solid fa-chevron-down"></i>
+          <span>{{group.label}}</span>
+          <span class="cprlab-count">{{group.rows.length}}</span>
+        </h3>
+        <ol class="cprlab-skill-list">
+          {{#each group.rows as |s|}}
+            <li class="item cprlab-skill {{#if s.favorite}}favorite{{/if}} {{#unless s.level}}untrained{{/unless}}" data-item-id="{{s.id}}" draggable="true">
+              {{#if @root.lab.is.skills_dice}}
+                <div class="sk-main">
+                  <a class="rollable sk-name" data-roll-type="skill" data-roll-title="{{s.rollName}}">{{s.name}}{{#if s.difficult}} <small>(x2)</small>{{/if}}</a>
+                  <span class="sk-stat">{{s.statLabel}} {{s.statValue}}</span>
+                </div>
+                <div class="sk-level">
+                  <a class="sk-step" data-lab-step="-1"><i class="fa-solid fa-minus"></i></a>
+                  <input class="number skill-input" value="{{s.level}}" type="text" data-item-prop="system.level" data-dtype="Number" data-tooltip="{{localize 'CPR.characterSheet.rightPane.skills.lvl'}}"/>
+                  <a class="sk-step" data-lab-step="1"><i class="fa-solid fa-plus"></i></a>
+                </div>
+                <a class="rollable sk-dice {{#if s.situational}}situational{{/if}}" data-roll-type="skill" data-roll-title="{{s.rollName}}"
+                   data-tooltip="{{#if s.modTooltip}}{{s.modTooltip}}{{else}}{{s.statLabel}} {{s.statValue}} + LVL {{s.level}}{{/if}}">
+                  <i class="fa-solid fa-dice-d10"></i><span>+{{s.base}}</span>
+                </a>
+              {{else}}
+                <span class="sk-stat">{{s.statLabel}}</span>
+                <a class="rollable sk-name" data-roll-type="skill" data-roll-title="{{s.rollName}}">{{s.name}}{{#if s.difficult}} (x2){{/if}}</a>
+                <input class="number skill-input" value="{{s.level}}" type="text" data-item-prop="system.level" data-dtype="Number"/>
+                <span class="sk-mod {{#if s.situational}}situational{{/if}}" {{#if s.modTooltip}}data-tooltip="{{s.modTooltip}}"{{/if}}>{{#if s.mod}}{{s.mod}}{{/if}}</span>
+                <span class="sk-base">{{s.base}}</span>
+              {{/if}}
+              <span class="sk-tools">
+                {{#unless s.core}}
+                  <a class="item-edit" data-tooltip="{{localize 'CPR.actorSheets.commonActions.editCustomSkill'}}"><i class="fas fa-pen-to-square"></i></a>
+                  <a class="item-action" data-action-type="delete" data-tooltip="{{localize 'CPR.actorSheets.commonActions.deleteItem'}}"><i class="fas fa-trash-can"></i></a>
+                {{/unless}}
+                <a class="item-action sk-pin" data-action-type="favorite" data-tooltip="{{localize 'CPR.actorSheets.commonActions.togglePin'}}"><i class="fas fa-thumbtack"></i></a>
+              </span>
+            </li>
+          {{/each}}
+        </ol>
+      </section>
+    {{/each}}
+  </div>
+</div>

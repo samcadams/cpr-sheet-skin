@@ -1,0 +1,10 @@
+{
+  "name": "cpr-sheet-skin",
+  "private": true,
+  "type": "module",
+  "description": "Dev tooling only; Foundry reads module.json.",
+  "scripts": {
+    "release": "node tools/release.mjs"
+  },
+  "license": "GPL-3.0-or-later"
+}

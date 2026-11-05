@@ -1,0 +1,109 @@
+{{!-- Effects tab: the system's list (cpr-effects.hbs) with a switch for on/off and an eye that shows or hides
+      the effect in the Active bar. The system's listeners still handle every .effect-control. --}}
+<ol class="effects-list cprlab-effects-list">
+  {{#each filteredEffects as |section sid| }}
+    <li class="effects-category flexrow item-header" data-effect-type="{{section.type}}">
+      <span class="effect-name">{{localize section.label}}</span>
+      <span class="effect-source text-semi">{{localize "CPR.characterSheet.rightPane.effects.source"}}</span>
+      <span class="effect-actions text-semi text-padding-right-smallest">{{localize "CPR.characterSheet.rightPane.effects.actions"}}</span>
+    </li>
+    {{#each section.effects as |effect| }}
+      <li class="item effect flexrow {{#if effect.disabled}}cprlab-effect-off{{/if}}" data-effect-id="{{effect.uuid}}">
+        <div class="effect-name flexrow">
+          <img class="effect-image" src="{{effect.img}}"/>
+          <div class="effect-item">
+            <span class="text-semi">{{effect.name}}</span>
+            <br/>
+            {{#if effect.changes.length }}
+              {{#each effect.changes as |change| }}
+                <span class="text-pill">
+                  {{cprGetChangeNameByKey ../this change.category change.key}}
+                  {{#if change.value }}
+                    {{#unless (cprCompare change.key "===" "bonuses.hasPainSuppression")}}
+                      {{cprEffectModMode change.changeMode change.value}}
+                    {{/unless}}
+                  {{~else}}
+                    0
+                  {{~/if}}
+                  {{#if change.isSituational }}
+                    {{#if change.onByDefault }}
+                      <i data-tooltip="{{localize "CPR.characterSheet.rightPane.effects.situationalOnByDefault"}}" class="fas fa-circle-question text-padding-left-smaller text-vert-center"></i>
+                    {{else}}
+                      <i data-tooltip="{{localize "CPR.characterSheet.rightPane.effects.situationalOffByDefault"}}" class="far fa-circle-question text-padding-left-smaller text-vert-center"></i>
+                    {{~/if}}
+                  {{~/if}}
+                </span>
+              {{/each}}
+            {{else}}
+              ({{localize "CPR.characterSheet.rightPane.effects.noBonusesConfigured"}})
+            {{/if}}
+          </div>
+        </div>
+        <div class="effect-source">
+          {{effect.parentName}}
+          <br/>
+          {{#if (cprCompare effect.sourceName "!==" ../../actor.name) }}
+            ({{localize (cprFindConfigValue "effectUses" effect.usage)}})
+          {{/if}}
+        </div>
+        <div class="effect-actions text-padding-right-smallest">
+          {{#if (lookup @root.lab.effectsHidden effect.name)}}
+            <a class="cprlab-effect-bar-toggle off" data-lab-effect-bar="{{effect.name}}" aria-pressed="false"
+               data-tooltip="{{localize 'CPRSKIN.lab.effects.showInBar'}}" aria-label="{{localize 'CPRSKIN.lab.effects.showInBar'}}"><i class="fa-solid fa-eye-slash"></i></a>
+          {{else}}
+            <a class="cprlab-effect-bar-toggle" data-lab-effect-bar="{{effect.name}}" aria-pressed="true"
+               data-tooltip="{{localize 'CPRSKIN.lab.effects.hideInBar'}}" aria-label="{{localize 'CPRSKIN.lab.effects.hideInBar'}}"><i class="fa-solid fa-eye"></i></a>
+          {{/if}}
+          {{#if (cprShowEffectToggle effect ../../actor.name) }}
+            <a class="effect-control cprlab-switch {{#unless effect.disabled}}on{{/unless}}" data-action="toggle" role="switch"
+               aria-checked="{{#if effect.disabled}}false{{else}}true{{/if}}"
+               data-tooltip="{{localize 'CPR.characterSheet.rightPane.effects.toggle'}}" aria-label="{{localize 'CPR.characterSheet.rightPane.effects.toggle'}}"><span class="knob"></span></a>
+          {{/if}}
+          <a class="effect-control" data-action="edit" data-tooltip="{{localize 'CPR.characterSheet.rightPane.effects.edit'}}"><i class="fas fa-pen-to-square"></i></a>
+          {{#if (cprCompare effect.sourceName "===" ../../actor.name) }}
+            <a class="effect-control" data-action="copy" data-tooltip="{{localize 'CPR.characterSheet.rightPane.effects.duplicate'}}"><i class="fa-regular fa-copy"></i></a>
+            <a class="effect-control" data-action="delete" data-tooltip="{{localize 'CPR.characterSheet.rightPane.effects.delete'}}"><i class="fas fa-trash-can"></i></a>
+          {{/if}}
+        </div>
+      </li>
+    {{/each}}
+  {{/each}}
+
+  {{#if lab.injuries.length}}
+    {{!-- Critical injuries that carry no Active Effect (Broken Arm…): the rules still apply, so they are listed here and in the Active bar. --}}
+    <li class="effects-category flexrow item-header">
+      <span class="effect-name">{{localize "CPRSKIN.lab.effects.injuries"}}</span>
+      <span class="effect-source text-semi">{{localize "CPR.characterSheet.rightPane.effects.source"}}</span>
+      <span class="effect-actions text-semi text-padding-right-smallest">{{localize "CPR.characterSheet.rightPane.effects.actions"}}</span>
+    </li>
+    {{#each lab.injuries as |inj|}}
+      <li class="item effect flexrow cprlab-injury-effect" data-item-id="{{inj.id}}">
+        <div class="effect-name flexrow">
+          <img class="effect-image" src="{{inj.img}}"/>
+          <div class="effect-item">
+            <span class="text-semi">{{inj.name}}</span>
+            <br/>
+            {{#if inj.summary}}<span class="cprlab-injury-text">{{inj.summary}}</span>{{else}}({{localize "CPR.characterSheet.rightPane.effects.noBonusesConfigured"}}){{/if}}
+          </div>
+        </div>
+        <div class="effect-source">{{localize "CPR.characterSheet.bottomPane.fight.criticalInjuries"}}</div>
+        <div class="effect-actions text-padding-right-smallest">
+          {{#if (lookup @root.lab.effectsHidden inj.name)}}
+            <a class="cprlab-effect-bar-toggle off" data-lab-effect-bar="{{inj.name}}" aria-pressed="false"
+               data-tooltip="{{localize 'CPRSKIN.lab.effects.showInBar'}}" aria-label="{{localize 'CPRSKIN.lab.effects.showInBar'}}"><i class="fa-solid fa-eye-slash"></i></a>
+          {{else}}
+            <a class="cprlab-effect-bar-toggle" data-lab-effect-bar="{{inj.name}}" aria-pressed="true"
+               data-tooltip="{{localize 'CPRSKIN.lab.effects.hideInBar'}}" aria-label="{{localize 'CPRSKIN.lab.effects.hideInBar'}}"><i class="fa-solid fa-eye"></i></a>
+          {{/if}}
+          <a class="item-edit" data-tooltip="{{localize 'CPRSKIN.lab.effects.openInjury'}}" aria-label="{{localize 'CPRSKIN.lab.effects.openInjury'}}"><i class="fas fa-pen-to-square"></i></a>
+        </div>
+      </li>
+    {{/each}}
+  {{/if}}
+  <br/>
+  <div class="item-controls effect-controls">
+    <a class="effect-control" data-action="create" data-tooltip="{{localize 'CPR.itemSheet.effects.createEffectDesc'}}">
+      <i class="fas fa-plus"></i> {{localize "CPR.itemSheet.effects.createEffect"}}
+    </a>
+  </div>
+</ol>

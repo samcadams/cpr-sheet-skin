@@ -1,0 +1,35 @@
+{{!-- Exec teammate Loyalty check: the system's skill card layout, with a d6 and a result line like the Death Save card. --}}
+<div class="rollcard">
+  <div class="rollcard-top">
+    <div class="cpr-block chat-rollTitle-stat">
+      <div class="text-center text-padding-top text-normal text-semi">
+        {{rollTitle}}
+      </div>
+      <div class="text-center text-small">
+        {{localize "CPRSKIN.lab.team.loyaltyCheck"}}
+      </div>
+    </div>
+  </div>
+  <div class="rollcard-bottom">
+    <div class="cpr-block">
+      <div class="text-massive text-center {{#if loyaltySuccess}}roll-success{{else}}roll-failure{{/if}}">
+        {{#if loyaltySuccess}}{{localize "CPR.rolls.success"}}{{else}}{{localize "CPR.rolls.failed"}}{{/if}}
+      </div>
+      <div class="d6-rollcard-data">
+        <div class="d6-dice-div">
+          <img class="{{cprDiceSizeImageClass formula}}"
+               src="systems/cyberpunk-red-core/icons/dice/black/d6_{{initialRoll}}.svg"/>
+        </div>
+        <div class="d6-number-div">
+          <a><span class="clickable" data-action="toggleVisibility" data-visible-element="d6-data-details">{{resultTotal}}</span></a>
+        </div>
+        <div class="d6-data-div">
+          <div class="d6-data-details hide">
+            <div class="text-normal text-semi">{{localize "CPRSKIN.lab.team.loyalty"}}: {{loyalty}}</div>
+            <div class="text-normal text-semi">{{localize "CPRSKIN.lab.team.loyaltyRule"}}</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

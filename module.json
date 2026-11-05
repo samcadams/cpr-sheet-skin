@@ -1,0 +1,24 @@
+{
+  "id": "cpr-sheet-skin",
+  "title": "CPR Sheet Skin",
+  "description": "An opt-in Cyberpunk RED character sheet (one tab bar, a bold header with big numbers, cpr-hq panels) with per-user themes and view options. Extends the system sheet; no system code is changed.",
+  "version": "0.2.0",
+  "license": "LICENSE",
+  "authors": [{ "name": "samsamsamsam" }],
+  "url": "https://github.com/samcadams/cpr-sheet-skin",
+  "bugs": "https://github.com/samcadams/cpr-sheet-skin/issues",
+  "manifest": "https://github.com/samcadams/cpr-sheet-skin/releases/latest/download/module.json",
+  "download": "https://github.com/samcadams/cpr-sheet-skin/releases/download/v0.2.0/cpr-sheet-skin.zip",
+  "compatibility": { "minimum": "12", "verified": "12" },
+  "relationships": {
+    "systems": [{ "id": "cyberpunk-red-core", "type": "system", "compatibility": { "minimum": "v0.92.4", "verified": "v0.92.4" } }],
+    "recommends": [{
+      "id": "cpr-hq", "type": "module",
+      "reason": "Workshop and Downtime/Lifestyle panels on the sheet, gear upkeep tags, and the HQ healing bonus.",
+      "compatibility": { "minimum": "1.0.0" }
+    }]
+  },
+  "esmodules": ["scripts/main.js"],
+  "styles": ["styles/skin.css"],
+  "languages": [{ "lang": "en", "name": "English", "path": "lang/en.json" }]
+}

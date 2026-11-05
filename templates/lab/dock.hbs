@@ -1,0 +1,38 @@
+{{!-- Actions dock: equipped weapon cards, beside every tab. Collapses to a thin rail. --}}
+<div class="cprlab-dock-head">
+  <h4 class="cprlab-dock-title">{{localize "CPRSKIN.lab.dock.title"}}</h4>
+  <a class="cprlab-icon-btn cprlab-dock-toggle" data-lab-ui="dock"
+     data-tip-open="{{localize 'CPRSKIN.lab.dock.collapse'}}" data-tip-closed="{{localize 'CPRSKIN.lab.dock.expand'}}"
+     data-tooltip="{{#if lab.ui.dock}}{{localize 'CPRSKIN.lab.dock.expand'}}{{else}}{{localize 'CPRSKIN.lab.dock.collapse'}}{{/if}}"
+     aria-label="{{#if lab.ui.dock}}{{localize 'CPRSKIN.lab.dock.expand'}}{{else}}{{localize 'CPRSKIN.lab.dock.collapse'}}{{/if}}"><i class="fa-solid fa-angles-right"></i></a>
+</div>
+
+<div class="cprlab-dock-body">
+  {{#each actor.system.weapons.equipped as |weapon|}}
+    <div class="item cprlab-dock-weapon" data-item-id="{{weapon.id}}">
+      <div class="dw-head">
+        <img src="{{weapon.img}}" alt=""/>
+        <a class="item-edit dw-name" data-item-id="{{weapon.id}}">{{weapon.name}}</a>
+      </div>
+      {{#with (lookup @root.lab.gear.upkeep weapon.id) as |uk|}}
+        <div class="cprlab-uk-strip">
+          {{#each uk.tags as |t|}}<span class="cprlab-gtag {{t.cls}}" data-tooltip="{{t.tip}}" data-lab-upkeep role="button" tabindex="0"><i class="{{t.icon}}"></i> {{t.label}}</span>{{/each}}
+          {{#if uk.malfunction}}<span class="cprlab-uk-malftext">{{uk.malfunction}}</span>{{/if}}
+        </div>
+      {{/with}}
+      <div class="dw-meta">
+        <span>{{cprGetWeaponDamage weapon}}</span>
+        {{#if weapon.system.isRanged}}
+          <span>{{#if weapon.system.hasAmmoLoaded}}{{weapon.system.magazine.value}}/{{cprApplyUpgrade weapon weapon.system.magazine.max "magazine"}}{{else}}{{localize "CPR.mookSheet.items.unloaded"}}{{/if}}</span>
+          {{> "systems/cyberpunk-red-core/templates/actor/mixin/actions/cpr-reload-glyph.hbs" weapon}}
+        {{/if}}
+      </div>
+      <div class="dw-actions">
+        <a class="rollable dw-attack" data-roll-type="attack" data-item-id="{{weapon.id}}"><i class="fas fa-hand-fist"></i> {{localize "CPRSKIN.lab.dock.attack"}}</a>
+        <a class="rollable dw-damage" data-roll-type="damage" data-item-id="{{weapon.id}}" data-damage="{{weapon.system.damage}}"><i class="fas fa-droplet"></i> {{localize "CPRSKIN.lab.dock.damage"}}</a>
+      </div>
+    </div>
+  {{else}}
+    <p class="cprlab-empty">{{localize "CPRSKIN.lab.dock.none"}}</p>
+  {{/each}}
+</div>

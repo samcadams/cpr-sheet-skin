@@ -1,0 +1,359 @@
+/* Skin sheet: Life tab and the embedded cpr-hq Downtime / Lifestyle & Housing panels.
+ *
+ * The Life tab is one page: Lifestyle & Housing on top, then the Lifepath
+ * story (Style / Values & people / History) beside the Player notes. All three
+ * share one heading style (.cprlab-life-head look), one card surface
+ * (--sk-panel, hairline border, accent strip) and one spacing step (0.8rem).
+ * cpr-hq's panels are restyled here only; its own windows are untouched.
+ */
+
+/* ---------------------------------------------------------------- Lifepath */
+
+.app.cprlab .cprlab-story {
+  display: grid;
+  grid-template-columns: minmax(0, 1.4fr) minmax(16rem, 0.8fr);
+  gap: 0.8rem;
+}
+/* Section headings: Style, Values & people, History, Player notes, and the
+   cpr-hq panel heads below. Fixed height so a heading with a button lines up
+   with one without. */
+.app.cprlab .cprlab-story h3 {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  min-height: 1.75rem;
+  margin: 0 0 0.45rem;
+  padding: 0 0 0.15rem;
+  border: none;
+  border-bottom: 1px solid var(--sk-line);
+  color: var(--sk-muted);
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  font-family: inherit;
+  text-shadow: none;
+}
+.app.cprlab .cprlab-story-group {
+  margin-bottom: 0.8rem;
+}
+.app.cprlab .cprlab-story-group:last-child {
+  margin-bottom: 0;
+}
+.app.cprlab .cprlab-story-group h3 .set-lifepath {
+  margin: 0 0 0 auto;
+  text-transform: none;
+  letter-spacing: normal;
+  font-weight: 400;
+}
+.app.cprlab .cprlab-story-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(12rem, 1fr));
+  gap: 0.4rem;
+}
+.app.cprlab .cprlab-story-card {
+  padding: 0.35rem 0.55rem;
+  border: 1px solid var(--sk-line);
+  border-left: 3px solid var(--sk-accent);
+  border-radius: var(--sk-radius);
+  background: var(--sk-panel);
+}
+.app.cprlab .cprlab-story-card.empty {
+  border-left-color: var(--sk-line);
+}
+.app.cprlab .cprlab-story-card.empty .cprlab-story-value {
+  color: var(--sk-muted);
+}
+.app.cprlab .cprlab-story-card label {
+  display: block;
+  color: var(--sk-muted);
+  font-size: 0.68rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+.app.cprlab .cprlab-story-value p {
+  margin: 0;
+}
+
+/* Player notes: fills the column next to the story groups. */
+.app.cprlab .cprlab-notes {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+.app.cprlab .cprlab-notes .note-pad {
+  position: relative;
+  flex: 1;
+  min-height: 22rem;
+  display: flex;
+  flex-direction: column;
+  border: 1px solid var(--sk-line);
+  border-left: 3px solid var(--sk-accent);
+  border-radius: var(--sk-radius);
+  background: var(--sk-panel);
+  padding: 0.35rem 0.55rem;
+}
+.app.cprlab .cprlab-notes .note-pad .editor {
+  flex: 1;
+  min-height: 21rem;
+}
+/* The system draws ProseMirror's menu with --cpr-background-editor-button /
+   --cpr-text-foundry-input (!important). The skins map the text colour onto
+   --sk-fg but leave the button background light, so the icons were light on
+   light. Point both at the sheet's tokens. */
+.app.cprlab .cprlab-notes {
+  --cpr-background-editor-button: var(--sk-panel-2);
+  --cpr-text-foundry-input: var(--sk-fg);
+}
+.app.cprlab .cprlab-notes .editor-menu {
+  gap: 0.25rem;
+  padding-bottom: 0.35rem;
+  margin-bottom: 0.35rem;
+  border-bottom: 1px solid var(--sk-line);
+}
+.app.cprlab .cprlab-notes .editor-menu button {
+  border: 1px solid var(--sk-line);
+  border-radius: var(--sk-radius);
+}
+.app.cprlab .cprlab-notes .editor-menu button:hover,
+.app.cprlab .cprlab-notes .editor-menu button.active {
+  border-color: var(--sk-accent);
+  box-shadow: none;
+}
+.app.cprlab .cprlab-notes .editor-menu button.active i,
+.app.cprlab .cprlab-notes .editor-menu button:hover i {
+  color: var(--sk-accent);
+}
+.app.cprlab .cprlab-notes .editor-menu .pm-dropdown ul {
+  border: 1px solid var(--sk-line);
+}
+.app.cprlab .cprlab-notes .editor-menu .pm-dropdown li:hover {
+  background: var(--sk-panel);
+}
+/* Foundry's edit toggle: a translucent grey chip with the inherited (light)
+   text colour. */
+.app.cprlab .cprlab-notes .editor-edit {
+  padding: 0.1rem 0.3rem;
+  border: 1px solid var(--sk-line);
+  border-radius: var(--sk-radius);
+  background: var(--sk-panel-2);
+  color: var(--sk-accent);
+  box-shadow: none;
+}
+.app.cprlab .cprlab-notes .editor-edit:hover {
+  border-color: var(--sk-accent);
+  text-shadow: none;
+}
+
+/* ------------------------------------------------------- cpr-hq panels */
+
+/* The panels are styled for cpr-hq's own windows (.application.cpr-hq
+   .window-content). The wrapper copies that structure; undo the parts of
+   Foundry's window styling it would otherwise pick up. */
+.app.cprlab .cprlab-hq.application {
+  position: static;
+  display: block;
+  min-width: 0;
+  max-height: none;
+  margin: 0;
+  border: none;
+  border-radius: 0;
+  box-shadow: none;
+  background: transparent;
+  z-index: auto;
+}
+.app.cprlab .cprlab-hq.application > .window-content {
+  padding: 0;
+  overflow: visible;
+  background: transparent;
+}
+/* Follow the sheet's theme. */
+.app.cprlab .cpr-hq {
+  --hq-bg: var(--sk-bg);
+  --hq-panel: var(--sk-panel);
+  --hq-panel-2: var(--sk-panel-2);
+  --hq-line: var(--sk-line);
+  --hq-fg: var(--sk-fg);
+  --hq-muted: var(--sk-muted);
+  --hq-cyan: var(--sk-accent);
+  --hq-orange: var(--sk-accent);
+  color: var(--sk-fg);
+}
+.app.cprlab .cprlab-hq h1,
+.app.cprlab .cprlab-hq h2,
+.app.cprlab .cprlab-hq h3,
+.app.cprlab .cprlab-hq h4 {
+  text-shadow: none;
+}
+
+/* Lifestyle & Housing (Life tab), Downtime and Workshop (their own tabs):
+   restyled to read like the rest of the sheet. */
+.app.cprlab .cprlab-hq:is([data-lab-hq="housing"], [data-lab-hq="downtime"], [data-lab-hq="workshop"]) {
+  /* Status colours: the sheet's, which keep AA contrast in light themes too
+     (cpr-hq's are tuned for its dark window). */
+  --hq-yellow: var(--sk-warn);
+  --hq-red: var(--sk-danger);
+  --hq-green: var(--sk-good);
+  --radius: var(--sk-radius);
+  font-size: inherit;
+}
+/* The bank's warning, which would otherwise take the accent colour. */
+.app.cprlab .cprlab-hq[data-lab-hq="workshop"] .ws-bank-expiry { color: var(--sk-warn); }
+.app.cprlab .cprlab-hq.cprlab-hq-housing {
+  margin-bottom: 0.8rem;
+}
+/* Panel heads: same look as the Lifepath headings. */
+.app.cprlab .cprlab-hq .window-content .dt-section .panel-head {
+  min-height: 1.75rem;
+  margin: 0 0 0.45rem;
+  padding: 0 0 0.15rem;
+  gap: 0.4rem;
+  border-bottom: 1px solid var(--sk-line);
+}
+.app.cprlab .cprlab-hq .window-content .dt-section .panel-head h3,
+.app.cprlab .cprlab-hq .window-content .dt-section > h3 {
+  margin: 0;
+  gap: 0.5rem;
+  color: var(--sk-muted);
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+}
+.app.cprlab .cprlab-hq .window-content .dt-section .panel-head h3 i {
+  font-size: 0.85em;
+}
+/* Header buttons as the sheet's pills (Edit Lifepath, view pills). */
+.app.cprlab .cprlab-hq .window-content .panel-head button {
+  padding: 0.1rem 0.6rem;
+  line-height: 1.4;
+  border: 1px solid var(--sk-line);
+  border-radius: 999px;
+  background: var(--sk-panel);
+  color: var(--sk-fg);
+  font-size: 0.78rem;
+}
+.app.cprlab .cprlab-hq .window-content .panel-head button:hover:not(:disabled) {
+  border-color: var(--sk-accent);
+}
+.app.cprlab .cprlab-hq .window-content .panel-head small,
+.app.cprlab .cprlab-hq .window-content .panel-head .hint {
+  font-size: 0.72rem;
+}
+/* Other buttons: the sheet's panel surface. */
+.app.cprlab .cprlab-hq .window-content button {
+  background: var(--sk-panel-2);
+  border-color: var(--sk-line);
+  border-radius: var(--sk-radius);
+  color: var(--sk-fg);
+}
+.app.cprlab .cprlab-hq .window-content button:hover:not(:disabled) {
+  border-color: var(--sk-accent);
+  box-shadow: none;
+}
+.app.cprlab .cprlab-hq .window-content :is(.btn-primary, .btn-Upgrade) {
+  border-color: var(--sk-accent);
+  color: var(--sk-accent);
+}
+/* Form controls: selects get the sheet's raised surface instead of cpr-hq's
+   near-black; text and number fields stay borderless like the rest of the
+   sheet and show a frame on hover/focus. */
+.app.cprlab .cprlab-hq .window-content :is(select, textarea) {
+  background: var(--sk-panel-2);
+  border: 1px solid var(--sk-line);
+  border-radius: var(--sk-radius);
+  color: var(--sk-fg);
+}
+.app.cprlab .cprlab-hq .window-content :is(input[type="text"], input[type="number"]) {
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: var(--sk-radius);
+  color: var(--sk-fg);
+}
+.app.cprlab .cprlab-hq .window-content :is(select, textarea):hover,
+.app.cprlab .cprlab-hq .window-content :is(select, textarea):focus {
+  border-color: var(--sk-accent);
+  box-shadow: none;
+}
+.app.cprlab .cprlab-hq .window-content :is(input[type="text"], input[type="number"]):hover,
+.app.cprlab .cprlab-hq .window-content :is(input[type="text"], input[type="number"]):focus {
+  border-color: var(--sk-line);
+  background: var(--sk-panel-2);
+  box-shadow: none;
+}
+.app.cprlab .cprlab-hq .window-content option {
+  background: var(--sk-panel);
+  color: var(--sk-fg);
+}
+/* Foundry draws checkboxes with Font Awesome glyphs in its warm orange. */
+.app.cprlab .cprlab-hq .window-content input[type="checkbox"] {
+  --checkbox-checked-color: var(--sk-accent);
+  --checkbox-checkmark-color: var(--sk-accent-fg);
+  --checkbox-background-color: var(--sk-panel-2);
+  accent-color: var(--sk-accent);
+}
+
+/* Lifestyle card: the same surface as the story cards. */
+.app.cprlab .cprlab-hq .window-content .ls-card {
+  margin: 0;
+  padding: 0.5rem 0.7rem 0.6rem;
+  border: 1px solid var(--sk-line);
+  border-left: 3px solid var(--sk-accent);
+  border-radius: var(--sk-radius);
+  background: var(--sk-panel);
+}
+.app.cprlab .cprlab-hq .window-content .ls-card + .ls-card {
+  margin-top: 0.4rem;
+}
+.app.cprlab .cprlab-hq .window-content .ls-card > header {
+  margin-bottom: 0.4rem;
+  padding-bottom: 0.35rem;
+  border-bottom: 1px solid var(--sk-line);
+}
+.app.cprlab .cprlab-hq .window-content .ls-card > header img {
+  width: 24px;
+  height: 24px;
+  border-radius: var(--sk-radius);
+  /* The default token is a white silhouette: keep it visible on light panels. */
+  background: var(--sk-header-bg);
+}
+.app.cprlab .cprlab-hq .window-content .ls-total {
+  color: var(--sk-fg);
+  font-variant-numeric: tabular-nums;
+}
+.app.cprlab .cprlab-hq .window-content .ls-grid {
+  gap: 0.8rem;
+}
+.app.cprlab .cprlab-hq .window-content .ls-col {
+  gap: 0.6rem;
+}
+/* Block titles (Housing, Lifestyle, Trauma Team) read like the card labels. */
+.app.cprlab .cprlab-hq .window-content .ls-block h4 {
+  gap: 0.4rem;
+  color: var(--sk-muted);
+  font-size: 0.68rem;
+  font-weight: 400;
+  letter-spacing: 0.08em;
+}
+.app.cprlab .cprlab-hq .window-content .ls-check {
+  color: var(--sk-fg);
+}
+.app.cprlab .cprlab-hq .window-content .ls-explain summary {
+  color: var(--sk-accent);
+}
+
+/* Downtime tab. */
+.app.cprlab .cprlab-hq .window-content .dt-downtime {
+  padding-bottom: 0.6rem;
+}
+.app.cprlab .cprlab-hq .window-content .dt-past-toggle {
+  color: var(--sk-accent);
+}
+.app.cprlab .cprlab-hq .window-content :is(.dt-banner, .dt-costs, .dt-total) {
+  background: var(--sk-panel);
+}
+.app.cprlab .cprlab-hq .window-content :is(.dt-track, .dt-mini-track) {
+  background-color: var(--sk-panel);
+}
+.app.cprlab .cprlab-hq .window-content .dt-handle:hover {
+  background: color-mix(in srgb, var(--sk-fg) 35%, transparent);
+}

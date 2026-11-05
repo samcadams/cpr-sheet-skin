@@ -1,0 +1,121 @@
+@import url("lab.css");
+@import url("lab-gear.css");
+@import url("lab-fight.css");
+@import url("lab-life.css");
+@import url("lab-cyber.css");
+
+/*
+ * CPR Sheet Skin
+ *
+ * Every rule is scoped to a .cprskin-* class on the skin sheet's window, so
+ * nothing leaks into other sheets. Themes set a small palette of --sk-*
+ * tokens. The sheet itself is coloured only through those tokens; one shared
+ * rule also maps them onto the system's --cpr-* variables, for the system
+ * partials the sheet still renders (Netspace, dialogs it opens inline).
+ */
+
+/* ------------------------------------------------------------- Palettes */
+
+/* Matches cpr-hq: charcoal panels, hairlines, cyan accent. */
+.app.cprskin-theme-hq {
+  --sk-bg: #0f1113;
+  --sk-panel: #171a1d;
+  --sk-panel-2: #1e2226;
+  --sk-row-alt: #1b1e22;
+  --sk-line: #2c3238;
+  --sk-frame: #2c3238;
+  --sk-fg: #e9e6dd;
+  --sk-muted: #8d9399;
+  --sk-accent: #31c6d4;
+  --sk-accent-fg: #0f1113;
+  --sk-accent-2: #2c3238;
+  --sk-header-bg: #1e2226;
+  --sk-header-fg: #8d9399;
+  --sk-pill-bg: #1e2226;
+  --sk-pill-fg: #31c6d4;
+  --sk-danger: #e0303f;
+  --sk-good: #4fd18b;
+  --sk-warn: #e8c547;
+  --sk-alert: #f08a3c;
+  color-scheme: dark;
+}
+
+/* Demiplane-style: black and gold, big numbers, bold skill names. */
+.app.cprskin-theme-gold {
+  --sk-bg: #0c0c0c;
+  --sk-panel: #151515;
+  --sk-panel-2: #1c1c1c;
+  --sk-row-alt: #191919;
+  --sk-line: #343434;
+  --sk-frame: #343434;
+  --sk-fg: #ececec;
+  --sk-muted: #9a9a9a;
+  --sk-accent: #f5b50a;
+  --sk-accent-fg: #0c0c0c;
+  --sk-accent-2: #3a2f0c;
+  --sk-header-bg: #1f1f1f;
+  --sk-header-fg: #f5b50a;
+  --sk-pill-bg: transparent;
+  --sk-pill-fg: #9a9a9a;
+  --sk-danger: #e5484d;
+  --sk-good: #3fbf7f;
+  --sk-warn: #ffd84d;
+  --sk-alert: #f2792e;
+  color-scheme: dark;
+}
+
+/* Tokens -> system variables, shared by every theme. */
+.app.cprskin {
+  --cpr-background-window: var(--sk-bg);
+  --cpr-background-border: var(--sk-frame);
+  --cpr-background-box: var(--sk-panel);
+  --cpr-background-header: var(--sk-header-bg);
+  --cpr-background-pill: var(--sk-pill-bg);
+  --cpr-background-row-even: var(--sk-panel);
+  --cpr-background-row-odd: var(--sk-row-alt);
+  --cpr-background-tab-active: var(--sk-accent);
+  --cpr-background-tab-inactive: var(--sk-panel-2);
+  --cpr-background-tab-underlay: var(--sk-accent-2);
+  --cpr-background-foundry-input: var(--sk-panel);
+  --cpr-background-foundry-button: var(--sk-panel-2);
+  --cpr-background-foundry-hover: var(--sk-accent);
+  --cpr-background-toggle-checked: var(--sk-accent);
+  --cpr-background-toggle-unchecked: var(--sk-line);
+  --cpr-background-toggle-dot: var(--sk-fg);
+  --cpr-background-dialog-border: var(--sk-line);
+  --cpr-background-dialog-selected: var(--sk-row-alt);
+  --cpr-background-cyberdeck-section-header: var(--sk-header-bg);
+  --cpr-text-normal: var(--sk-fg);
+  --cpr-text-window: var(--sk-fg);
+  --cpr-text-input: var(--sk-fg);
+  --cpr-text-foundry-input: var(--sk-fg);
+  --cpr-text-foundry-hover: var(--sk-accent-fg);
+  --cpr-text-header: var(--sk-header-fg);
+  --cpr-text-header-line: var(--sk-accent);
+  --cpr-text-header-line-box: var(--sk-accent);
+  --cpr-text-header-arrow: var(--sk-accent);
+  --cpr-text-pill: var(--sk-pill-fg);
+  --cpr-text-hint: var(--sk-muted);
+  --cpr-text-foundry-hint: var(--sk-muted);
+  --cpr-text-icon-normal: var(--sk-fg);
+  --cpr-text-icon-highlight: var(--sk-accent);
+  --cpr-text-icon-dimmed: var(--sk-muted);
+  --cpr-text-tab-normal: var(--sk-fg);
+  --cpr-text-tab-highlight: var(--sk-accent);
+  --cpr-icon-actor-image-overlay: var(--sk-accent);
+  --cpr-icon-actor-image-overlay-border: var(--sk-bg);
+}
+
+/* ---------------------------------------------------- Theme details */
+
+/* HQ: cyan rule on the left of the system's section headers (Netspace). */
+.app.cprskin-theme-hq .fight-tab .section-name {
+  box-shadow: inset 3px 0 0 var(--sk-accent);
+}
+
+/* ------------------------------------------------------------ Text size */
+
+.app.cprskin-scale-90 .window-content { zoom: 0.9; }
+.app.cprskin-scale-115 .window-content { zoom: 1.15; }
+.app.cprskin-scale-130 .window-content { zoom: 1.3; }
+

@@ -1,0 +1,70 @@
+{{!-- Cyber tab, body view (scripts/lab/cyber-body/view.js). Shown when the "Cyber tab" view option is Body. --}}
+{{#*inline "cprlabCbAct"}}
+  <a class="cprlab-act {{cls}} {{#if on}}on{{/if}} {{#if danger}}danger{{/if}} {{#if strong}}strong{{/if}}"
+     {{#if actionType}}data-action-type="{{actionType}}"{{/if}}
+     {{#if prop}}data-item-prop="{{prop}}"{{/if}}
+     {{#if parent}}data-direct-parent="{{parent}}"{{/if}}
+     data-tooltip="{{tip}}"><i class="{{icon}}"></i></a>
+{{/inline}}
+{{#*inline "cprlabCbCol"}}
+  <div class="cprlab-cb-col" data-side="{{side}}">
+    {{#each groups as |g|}}
+      <section class="cprlab-cb-group">
+        <h3 class="cprlab-cb-gl"><span>{{g.label}}</span>{{#if g.slots}}<small data-tooltip="{{g.slots.tip}}">{{g.slots.used}}/{{g.slots.max}}</small>{{/if}}</h3>
+        {{#if g.empty}}
+          <div class="cprlab-cb-none">{{localize "CPRSKIN.lab.cyberBody.noneOfType"}}</div>
+        {{else if ../tiles}}
+          {{#each g.chunks as |ch|}}
+            <div class="cprlab-cb-tiles" data-cb-row="{{ch.first}}">
+              {{#each ch.rows}}
+                <div class="item cprlab-cb-tile {{#if found}}found{{/if}}" data-item-id="{{id}}" data-cb-id="{{id}}"
+                     tabindex="0" role="button" aria-label="{{label}}" data-tooltip="{{label}}"><img src="{{img}}" alt=""/></div>
+              {{/each}}
+              {{#each ch.free}}<span class="cprlab-cb-tile slot" data-tooltip="{{ch.freeTip}}"></span>{{/each}}
+            </div>
+          {{/each}}
+        {{else}}
+          {{#each g.rows}}
+            <div class="item cprlab-cb-row {{#if found}}found{{/if}} {{#if opt}}opt{{/if}}" data-item-id="{{id}}" data-cb-id="{{id}}"
+                 tabindex="0" role="button">
+              <img src="{{img}}" alt=""/><span class="nm">{{label}}</span>
+              {{#if slots}}<span class="cprlab-slots" data-tooltip="{{slots.tip}}">{{#each slots.pips}}<i class="{{#if full}}full{{/if}}"></i>{{/each}}</span>{{/if}}
+              <i class="nub"></i>
+            </div>
+          {{/each}}
+        {{/if}}
+      </section>
+    {{/each}}
+  </div>
+{{/inline}}
+<div class="cprlab-cb layout-{{lab.prefs.cyberItems}}">
+  <div class="cprlab-cb-stage" data-cb-stage="{{lab.cyberBody.json}}" data-cb-layout="{{lab.prefs.cyberItems}}">
+    <canvas aria-hidden="true"></canvas>
+    {{> cprlabCbCol side="L" groups=lab.cyberBody.cols.L tiles=lab.is.cyberItems_tiles}}
+    <div class="cprlab-cb-mid"></div>
+    {{> cprlabCbCol side="R" groups=lab.cyberBody.cols.R tiles=lab.is.cyberItems_tiles}}
+    <div class="cprlab-cb-pickbar" data-cb-pickbar></div>
+  </div>
+  <div class="cprlab-cb-readouts">
+    <p class="cprlab-cb-read hint" data-cb-read="">{{localize "CPRSKIN.lab.cyberBody.hint"}}</p>
+    {{#each lab.cyberBody.readouts}}
+      <div class="item cprlab-cb-read" data-cb-read="{{id}}" data-item-id="{{id}}" hidden>
+        <img src="{{img}}" alt=""/>
+        <div class="txt">
+          <span class="tag">{{group}}{{#if role}} · {{role}}{{/if}}</span>
+          <h4>{{name}}</h4>
+          {{#if desc}}<p class="desc">{{desc}}</p>{{/if}}
+          <div class="loc"><i class="fa-solid fa-location-crosshairs"></i> {{spot}} <span>— {{how}}</span></div>
+        </div>
+        <div class="side">
+          {{#if hl}}<div class="hl">{{localize "CPRSKIN.lab.cyberBody.hl"}}<b>{{hl}}</b></div>{{/if}}
+          <div class="cprlab-gear-actions">
+            {{#each tags as |t|}}<span class="cprlab-gtag {{t.cls}}" data-tooltip="{{t.tip}}" data-lab-upkeep role="button" tabindex="0"><i class="{{t.icon}}"></i> {{t.label}}</span>{{/each}}
+            {{#if canPlace}}<a class="cprlab-act" data-cb-place data-tooltip="{{localize 'CPRSKIN.lab.cyberBody.place'}}"><i class="fa-solid fa-location-crosshairs"></i></a>{{/if}}
+            {{#each actions}}{{> cprlabCbAct}}{{/each}}
+          </div>
+        </div>
+      </div>
+    {{/each}}
+  </div>
+</div>
