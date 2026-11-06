@@ -1,0 +1,15 @@
+<form class="cprskin-settings" autocomplete="off">
+  {{#each rows}}
+  <div class="form-group">
+    <label>{{label}}</label>
+    <div class="form-fields">
+      <select name="{{key}}">
+        {{#each options}}<option value="{{value}}" {{#if active}}selected{{/if}}>{{label}}</option>{{/each}}
+      </select>
+    </div>
+  </div>
+  {{/each}}
+  <footer class="sheet-footer flexrow">
+    <button type="submit"><i class="fa-solid fa-save"></i> {{localize "SETTINGS.Save"}}</button>
+  </footer>
+</form>

@@ -50,8 +50,9 @@ const WOUND_ICONS = {
   mortallyWounded: "wounded_mortally"
 };
 
-/** Effects most characters carry all the time: kept out of the Active bar unless the user shows them. */
-const DEFAULT_HIDDEN_EFFECTS = ["Agent", "Flashlight"];
+/** Effects most characters carry all the time: kept out of the Active bar unless the user shows them (world setting). */
+const defaultHiddenEffects = () => String(game.settings.get(MODULE_ID, "hiddenEffects") ?? "")
+  .split(",").map((name) => name.trim()).filter(Boolean);
 
 /** Lifepath cards are grouped the way the rulebook's Lifepath reads. */
 const LIFEPATH_GROUPS = {
@@ -242,7 +243,9 @@ export default class CPRLabSheet extends CPRCharacterActorSheet {
     const humanity = Number(this.actor.system.derivedStats.humanity.value) || 0;
     const emp = Math.floor(humanity / 10);
     const state = humanity < 0 ? "extreme" : emp <= 0 ? "psycho" : emp === 1 ? "danger" : emp === 2 ? "warn" : "ok";
-    const tip = state === "ok" ? "" : game.i18n.localize(`CPRSKIN.lab.vitals.humanityState.${state}`);
+    const labels = game.settings.get(MODULE_ID, "humanityLabels") ?? {};
+    const tip = state === "ok" || !game.settings.get(MODULE_ID, "humanityStrip") ? ""
+      : labels[state] || game.i18n.localize(`CPRSKIN.lab.vitals.humanityState.${state}`);
     return { state, tip };
   }
 
@@ -513,9 +516,10 @@ export default class CPRLabSheet extends CPRCharacterActorSheet {
    */
   _labEffectsHidden() {
     const hidden = {};
+    const defaults = defaultHiddenEffects();
     for (const effect of this.actor.allApplicableEffects()) {
       const parent = effect.parent;
-      if (DEFAULT_HIDDEN_EFFECTS.includes(effect.name)
+      if (defaults.includes(effect.name)
         || (parent?.type === "cyberware" && parent.system.type === "fashionware")) hidden[effect.name] = true;
     }
     for (const [name, value] of Object.entries(game.modules.get(MODULE_ID).api.getUI().effectsHidden ?? {})) {
@@ -596,7 +600,7 @@ export default class CPRLabSheet extends CPRCharacterActorSheet {
         custom: role.getFlag(MODULE_ID, `notes.${noteKey(ability.name)}`) !== undefined,
         ...modInfo(ability.name)
       })),
-      team: execTeamContext(role, this.isEditable)
+      team: game.settings.get(MODULE_ID, "execTeam") ? execTeamContext(role, this.isEditable) : null
     })));
   }
 

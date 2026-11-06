@@ -7,6 +7,8 @@
  * as they are; the system itself is never changed.
  */
 
+import { registerMenus, settingsGroups } from "./settings.js";
+
 const MODULE_ID = "cpr-sheet-skin";
 const SETTING = "prefs";
 const UI_SETTING = "labUI";
@@ -109,6 +111,8 @@ Hooks.once("init", async () => {
     scope: "client",
     config: false,
     type: Object,
+    name: "CPRSKIN.settings.prefs.name",
+    hint: "CPRSKIN.settings.prefs.hint",
     default: { ...DEFAULTS },
     onChange: applyToOpenSheets,
   });
@@ -116,10 +120,30 @@ Hooks.once("init", async () => {
     scope: "client",
     config: false,
     type: Object,
+    name: "CPRSKIN.settings.labUI.name",
+    hint: "CPRSKIN.settings.labUI.hint",
     default: {},
   });
+  const world = (key, type, def, redraw = true) => game.settings.register(MODULE_ID, key, {
+    scope: "world",
+    config: false,
+    type,
+    name: `CPRSKIN.settings.${key}.name`,
+    hint: `CPRSKIN.settings.${key}.hint`,
+    default: def,
+    ...(redraw ? { onChange: applyToOpenSheets } : {}),
+  });
+  world("autoTrackArmor", Boolean, true, false);
+  world("humanityStrip", Boolean, true);
+  world("humanityLabels", Object, {});
+  world("execTeam", Boolean, true);
+  world("hiddenEffects", String, "Agent, Flashlight");
+  registerMenus();
 
   game.modules.get(MODULE_ID).api = { getPrefs, setPref, choices, getUI, setUI };
+  Hooks.once("i18nInit", () => {
+    game.modules.get(MODULE_ID).api.settings = { groups: settingsGroups() };
+  });
   Handlebars.registerHelper("cprskinChoices", (key) => choices(key));
 
   // The sheet imports the system's sheet class; load it on its own so a
@@ -145,6 +169,7 @@ Hooks.once("init", async () => {
  * the client that made the change.
  */
 async function trackArmor(item) {
+  if (!game.settings.get(MODULE_ID, "autoTrackArmor")) return;
   const actor = item.actor;
   if (item.type !== "armor" || typeof actor?.updateTrackedArmor !== "function") return;
   const sys = item.system;

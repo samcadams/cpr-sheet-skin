@@ -1,0 +1,14 @@
+<form class="cprskin-settings" autocomplete="off">
+  <p class="notes">{{hint}}</p>
+  {{#each rows}}
+  <div class="form-group">
+    <label>{{label}}</label>
+    <div class="form-fields">
+      <input type="text" name="{{key}}" value="{{value}}" placeholder="{{label}}">
+    </div>
+  </div>
+  {{/each}}
+  <footer class="sheet-footer flexrow">
+    <button type="submit"><i class="fa-solid fa-save"></i> {{localize "SETTINGS.Save"}}</button>
+  </footer>
+</form>

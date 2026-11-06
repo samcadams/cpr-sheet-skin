@@ -1,0 +1,19 @@
+<form class="cprskin-settings" autocomplete="off">
+  {{#each rows}}
+  <div class="form-group">
+    <label>{{name}}</label>
+    <div class="form-fields">
+      {{#if boolean}}<input type="checkbox" name="{{key}}" {{checked value}}>{{else}}<input type="text" name="{{key}}" value="{{value}}">{{/if}}
+    </div>
+    <p class="notes">{{hint}}</p>
+  </div>
+  {{#if labels}}
+  <div class="form-group">
+    <button type="button" data-action="labels"><i class="fa-solid fa-pen"></i> {{../labelsButton}}</button>
+  </div>
+  {{/if}}
+  {{/each}}
+  <footer class="sheet-footer flexrow">
+    <button type="submit"><i class="fa-solid fa-save"></i> {{localize "SETTINGS.Save"}}</button>
+  </footer>
+</form>
