@@ -185,7 +185,7 @@
 /* One grid for every category, so columns line up down the whole tab. */
 .app.cprlab .cprlab-gear-row {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(0, 2.2fr) 10.8rem 2.6rem 9.6rem;
+  grid-template-columns: minmax(0, 1.5fr) minmax(0, 1.7fr) 5.4rem 2.6rem 9.6rem;
   align-items: center;
   gap: 0.4rem;
   padding: 0.18rem 0.3rem 0.18rem 0.35rem;
@@ -252,10 +252,26 @@
 .app.cprlab .cprlab-gear-stats {
   align-items: center;
   display: flex;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
   gap: 0.25rem;
   min-width: 0;
   overflow: hidden;
+}
+/* One line: the name keeps its room, and value-only chips (ammo variety and type, cyberware type, ...) give way with
+   an ellipsis; labelled values, the amount and the magazine keep their width. */
+.app.cprlab .cprlab-gear-stats > * {
+  flex-shrink: 0;
+}
+/* A weapon's stats are all labelled, so in a narrow window the magazine wraps to a second line instead. */
+.app.cprlab .cprlab-gear-row.type-weapon .cprlab-gear-stats {
+  flex-wrap: wrap;
+}
+.app.cprlab .cprlab-gear-stats > .cprlab-gv:not(:has(small)) {
+  display: block;
+  flex-shrink: 1;
+  min-width: 2rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 /* Upkeep column right of the equip selector: status icons (Damaged, Due, ...) at rest, the toolbox while the row is
@@ -288,6 +304,14 @@
   align-items: center;
   gap: 0.1rem;
 }
+/* "x 1" only while the row is hovered or focused; it keeps its space so the chips stay put. */
+.app.cprlab .cprlab-gear-row .cprlab-gear-amount.single {
+  visibility: hidden;
+}
+.app.cprlab .cprlab-gear-row:hover .cprlab-gear-amount.single,
+.app.cprlab .cprlab-gear-row:focus-within .cprlab-gear-amount.single {
+  visibility: visible;
+}
 .app.cprlab .cprlab-gear-amount .x {
   color: var(--sk-muted);
   font-size: 0.75rem;
@@ -296,14 +320,21 @@
   width: 2.6rem;
   height: 1.4rem;
   padding: 0 0.2rem;
-  text-align: right;
+  text-align: left;
   font-variant-numeric: tabular-nums;
 }
 
-/* Equip state: three segments, the active one wide with its label. */
+/* Equip state: three icon segments, the active one filled. While the control is hovered, the active segment's label
+   slides open and the control grows to the left over the stats (flex-end overflows at the start), never over the
+   upkeep column. */
 .app.cprlab .cprlab-equip {
   display: flex;
+  justify-content: flex-end;
   height: 1.55rem;
+}
+.app.cprlab .cprlab-equip:hover {
+  position: relative;
+  z-index: 2;
 }
 .app.cprlab .cprlab-equip:empty {
   visibility: hidden;
@@ -312,8 +343,9 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 0.3rem;
-  flex: 0 0 1.75rem;
+  flex: 0 0 auto;
+  min-width: 1.75rem;
+  padding: 0;
   border: 1px solid var(--sk-line);
   margin-left: -1px;
   color: var(--sk-muted);
@@ -322,7 +354,7 @@
   cursor: pointer;
   overflow: hidden;
   white-space: nowrap;
-  transition: flex-basis 120ms, background 120ms;
+  transition: padding 160ms ease, background 120ms;
 }
 .app.cprlab .cprlab-equip-seg:first-child {
   margin-left: 0;
@@ -332,7 +364,18 @@
   border-radius: 0 var(--sk-radius) var(--sk-radius) 0;
 }
 .app.cprlab .cprlab-equip-seg span {
-  display: none;
+  display: inline-block;
+  max-width: 0;
+  margin-left: 0;
+  overflow: hidden;
+  transition: max-width 160ms ease, margin-left 160ms ease;
+}
+.app.cprlab .cprlab-equip:hover .cprlab-equip-seg.active {
+  padding: 0 0.45rem;
+}
+.app.cprlab .cprlab-equip:hover .cprlab-equip-seg.active span {
+  max-width: 6rem;
+  margin-left: 0.3rem;
 }
 .app.cprlab .cprlab-equip-seg:hover {
   color: var(--sk-fg);
@@ -341,12 +384,8 @@
   z-index: 1;
 }
 .app.cprlab .cprlab-equip-seg.active {
-  flex: 1 1 auto;
   cursor: default;
   font-weight: 700;
-}
-.app.cprlab .cprlab-equip-seg.active span {
-  display: inline;
 }
 .app.cprlab .cprlab-equip-seg.active.seg-equipped {
   background: var(--sk-accent);
@@ -360,10 +399,11 @@
 }
 .app.cprlab .cprlab-equip-seg.active.seg-owned {
   background: var(--sk-panel-2);
-  color: var(--sk-muted);
+  border-color: var(--sk-muted);
+  color: var(--sk-fg);
 }
 
-/* Better Grenades: labelled Throw (equip column of grenade ammo) and Fire (first in a launcher's actions). */
+/* Better Grenades: Throw is an icon button first in a grenade's actions, Fire a labelled one first in a launcher's. */
 .app.cprlab .cprlab-act.cprlab-grenade {
   gap: 0.3rem;
   border: 1px solid var(--sk-accent);
@@ -378,10 +418,6 @@
 .app.cprlab .cprlab-act.cprlab-grenade:hover {
   background: var(--sk-accent);
   color: var(--sk-accent-fg);
-}
-.app.cprlab .cprlab-equip .cprlab-grenade-throw {
-  flex: 1 1 auto;
-  height: 100%;
 }
 .app.cprlab .cprlab-gear-actions .cprlab-grenade-fire {
   width: auto;

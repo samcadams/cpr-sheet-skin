@@ -73,7 +73,7 @@ export default class CPRLabSheet extends CPRCharacterActorSheet {
     return foundry.utils.mergeObject(options, {
       classes: [...options.classes, "cprlab"],
       template: `${TEMPLATES}/sheet.hbs`,
-      width: 1120,
+      width: 1232,
       height: 880,
       tabs: [{ navSelector: ".cprlab-tabs", contentSelector: ".cprlab-body", initial: "skills" }],
       scrollY: [".cprlab-body", ".cprlab-dock"]

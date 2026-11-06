@@ -40,7 +40,7 @@ const DEFAULTS = {
 let SkinSheet = null;
 
 /** Window width the sheet is designed for, at 100% text size. */
-const SHEET_WIDTH = 1120;
+const SHEET_WIDTH = 1232;
 
 function isSkinSheet(app) {
   return !!SkinSheet && app instanceof SkinSheet;

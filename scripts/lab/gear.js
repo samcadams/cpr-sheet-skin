@@ -140,10 +140,12 @@ function gearTab(sheet, actor) {
     { value: "all", label: STRINGS.all, active: show === "all" },
     ...EQUIP_STATES.map(s => ({ value: s.value, icon: s.icon, label: s.label(), hint: s.hint(), count: counts[s.value], active: show === s.value }))
   ];
-  // Upkeep: everything that needs maintenance, a check, or is Damaged (cyberware included).
+  // Upkeep: everything that needs maintenance, a check, or is Damaged (uninstalled cyberware included).
   const upkeep = upkeepApi();
   if (upkeep) {
-    const count = upkeep.list(actor).filter(needsAttention).length;
+    // Count only what the filter lists: installed cyberware, upgrades and programs have no Gear row.
+    const listed = Object.keys(categories).flatMap(type => actor.itemTypes[type] ?? []).filter(i => !hiddenInGear(i));
+    const count = listed.filter(i => needsAttention(upkeep.status(i))).length;
     if (count || show === "upkeep") {
       showPills.push({ value: "upkeep", icon: "fa-solid fa-toolbox", label: STRINGS.upkeep, hint: STRINGS.upkeepHint, count, active: show === "upkeep", cls: "uk-pill" });
     }
@@ -177,8 +179,8 @@ function gearRow(actor, item, collapsed) {
     equip: equippable ? EQUIP_STATES.map(s => ({ value: s.value, icon: s.icon, label: s.label(), hint: s.hint(), active: sys.equipped === s.value })) : null,
     stackable: hasMixin(item.type, "stackable"),
     amount: Number(sys.amount) || 0,
+    single: (Number(sys.amount) || 0) <= 1,
     stats: [],
-    tags: [],
     actions: [],
     upkeep: upkeepAction(item),
     upgrades: null,
@@ -192,11 +194,12 @@ function gearRow(actor, item, collapsed) {
       row.stats.push({ value: configLabel("ammoVarieties", sys.variety) });
       if (sys.type) row.stats.push({ value: configLabel("ammoTypes", sys.type) });
       break;
-    case "cyberware":
-      row.tags.push({ label: STRINGS.notInstalled, cls: "off" });
+    case "cyberware": {
       row.stats.push({ value: configLabel("cyberwareTypes", sys.type) });
-      row.stats.push(hlStat(item));
+      const hl = hlStat(item);
+      if (hl.value !== "0") row.stats.push(hl);
       break;
+    }
     case "cyberdeck": {
       const max = upgraded(item, sys.installedItems.slots, "slots");
       row.stats.push({ label: L("CPR.global.generic.slots"), value: `${sys.installedItems.usedSlots ?? 0}/${max}` });
@@ -220,13 +223,13 @@ function gearRow(actor, item, collapsed) {
       break;
   }
 
-  row.actions = gearActions(actor, item);
+  row.actions = gearActions(item);
   // Upkeep status icons sit in the toolbox column; the toolbox takes their place on hover.
   row.ukTags = upkeepTags(item);
   if (item.type === "weapon" && sys.isRanged) magazineActions(item, row);
-  // MMuton's Better Grenades: Throw takes the empty equip column of grenade ammo; a launcher's Fire leads its actions.
+  // MMuton's Better Grenades: Throw is an icon button first in the actions (like Install); a launcher's Fire keeps its label.
   const grenade = grenadeAction(item);
-  if (grenade?.action === "throw") row.grenade = grenade;
+  if (grenade?.action === "throw") row.actions.unshift({ ...grenade, label: null });
   else if (grenade) row.grenadeFire = grenade;
   if (sys.installedItems?.list?.length && typeof item.getInstalledItems === "function") {
     // Loaded ammo keeps its own row in the Ammo section, so it isn't repeated under the weapon.
@@ -306,35 +309,33 @@ function magazineActions(item, row) {
   const mag = row.stats.find(s => s.mag);
   if (!mag) return;
   const max = Number(upgraded(item, sys.magazine.max, "magazine")) || 0;
-  mag.after = [(Number(sys.magazine.value) || 0) < max
-    ? { cls: "item-action", icon: "fas fa-rotate-right", tip: L("CPR.actorSheets.commonActions.reload"), action: "reload-ammo" }
-    : { icon: "fas fa-rotate-right", tip: STRINGS.fullMag, disabled: true },
-  { cls: "item-action", icon: "fas fa-arrow-right-arrow-left", tip: L("CPR.actorSheets.commonActions.changeAmmo"), action: "select-ammo" }];
+  mag.after = [{ cls: "item-action", icon: "fas fa-arrow-right-arrow-left", tip: L("CPR.actorSheets.commonActions.changeAmmo"), action: "select-ammo" }];
+  if ((Number(sys.magazine.value) || 0) < max) mag.after.unshift({ cls: "item-action", icon: "fas fa-rotate-right", tip: L("CPR.actorSheets.commonActions.reload"), action: "reload-ammo" });
 }
 
 /**
  * One button per action, in a fixed order; each keeps the system's class and data-* so its listener runs.
+ * Actions that can't be done right now (armor not worn, nothing to repair) aren't rendered.
  * Reload/change ammo, upkeep and manage upgrades are placed elsewhere in the row (see gearRow).
  */
-function gearActions(actor, item) {
+function gearActions(item) {
   const sys = item.system;
   const a = [];
   const add = (cls, icon, tip, extra = {}) => a.push({ cls, icon, tip, ...extra });
 
   if (item.type === "armor") {
-    // The system ablates the armor it tracks per location (.ablate + data-location), so only tracked armor gets the button.
-    const ext = actor.system.externalData ?? {};
-    const tracked = [["currentArmorHead", "head"], ["currentArmorBody", "body"], ["currentArmorShield", "shield"]]
-      .filter(([k]) => ext[k]?.id === item.id).map(([, loc]) => loc);
-    for (const loc of tracked) {
-      const where = L(loc === "shield" ? "CPR.global.generic.shield" : `CPR.global.location.${loc}`);
-      add("ablate", "fas fa-shield-halved", `${L("CPR.actorSheets.fightActions.ablateArmor")} (${where})`, { location: loc });
+    // The system's .ablate hits every equipped armor at its data-location (like the header's SP), so equipped armor
+    // gets one per location it covers, tracked or not.
+    if (sys.equipped === "equipped") {
+      const locs = [["head", sys.isHeadLocation], ["body", sys.isBodyLocation], ["shield", sys.isShield]].filter(([, on]) => on).map(([loc]) => loc);
+      for (const loc of locs) {
+        const where = L(loc === "shield" ? "CPR.global.generic.shield" : `CPR.global.location.${loc}`);
+        add("ablate", "fas fa-shield-halved", `${L("CPR.actorSheets.fightActions.ablateArmor")} (${where})`, { location: loc });
+      }
     }
-    if (!tracked.length) add("", "fas fa-shield-halved", STRINGS.untrackedHint, { disabled: true });
     const ablated = Number(sys.headLocation?.ablation) > 0 || Number(sys.bodyLocation?.ablation) > 0
       || (sys.isShield && Number(sys.shieldHitPoints.value) < Number(upgraded(item, sys.shieldHitPoints.max, "shieldHp")));
     if (ablated) add("repair", "fas fa-screwdriver-wrench", L("CPR.actorSheets.commonActions.repair"));
-    else add("", "fas fa-screwdriver-wrench", STRINGS.notAblated, { disabled: true });
   }
   if (item.type === "cyberware") add("install-remove-cyberware", "fas fa-microchip", L("CPR.global.generic.install"), { prop: "system.isInstalled", strong: true });
   if (item.type === "cyberdeck") add("item-action", "fa-solid fa-folder-plus", L("CPR.actorSheets.commonActions.managePrograms"), { actionType: "manage-programs" });
@@ -343,8 +344,8 @@ function gearActions(actor, item) {
     if (sys.isInstalled) add("item-action", "fas fa-arrow-right-from-bracket", L("CPR.actorSheets.commonActions.uninstallFromItem"), { actionType: "uninstall-item", on: true });
     else add("item-action", "fas fa-right-to-bracket", L("CPR.actorSheets.commonActions.installIntoItem"), { actionType: "install-item" });
   }
-  if (hasMixin(item.type, "stackable") && Number(sys.amount) > 1) add("item-action", "fas fa-scissors", L("CPR.actorSheets.commonActions.splitItem"), { actionType: "split" });
-  // Pin, edit and delete show only while the row is hovered (cprlab-hover-act).
+  if (hasMixin(item.type, "stackable") && Number(sys.amount) > 1) add("item-action cprlab-hover-act", "fas fa-scissors", L("CPR.actorSheets.commonActions.splitItem"), { actionType: "split" });
+  // Split, pin, edit and delete show only while the row is hovered (cprlab-hover-act).
   add("item-action cprlab-hover-act", "fas fa-thumbtack", L("CPR.actorSheets.commonActions.togglePin"), { actionType: "favorite", on: !!sys.favorite });
   add("item-edit cprlab-hover-act", "fas fa-pen-to-square", STRINGS.edit);
   add("item-action cprlab-hover-act", "fas fa-trash-can", L("CPR.actorSheets.commonActions.deleteItem"), { actionType: "delete", danger: true });

@@ -48,11 +48,8 @@
             </a>
             <span class="cprlab-gear-stats">
               {{#if r.stackable}}
-                <span class="cprlab-gear-amount"><span class="x">&times;</span><input class="gear-amount-input" type="number" data-item-prop="item.system.amount" value="{{r.amount}}"/></span>
+                <span class="cprlab-gear-amount {{#if r.single}}single{{/if}}"><span class="x">&times;</span><input class="gear-amount-input" type="number" data-item-prop="item.system.amount" value="{{r.amount}}"/></span>
               {{/if}}
-              {{#each r.tags as |t|}}
-                <span class="cprlab-gtag {{t.cls}}" {{#if t.tip}}data-tooltip="{{t.tip}}"{{/if}} {{#if t.upkeep}}data-lab-upkeep role="button" tabindex="0"{{/if}}>{{#if t.icon}}<i class="{{t.icon}}"></i> {{/if}}{{t.label}}</span>
-              {{/each}}
               {{#each r.stats as |s|}}
                 {{#if s.mag}}<span class="cprlab-gv-mag">{{#each s.before}}{{> cprlabGearAct}}{{/each}}{{/if}}
                 <span class="cprlab-gv {{s.cls}}" {{#if s.tip}}data-tooltip="{{s.tip}}"{{/if}}>
@@ -69,8 +66,6 @@
                     <i class="{{e.icon}}"></i><span>{{e.label}}</span>
                   </a>
                 {{/each}}
-              {{else if r.grenade}}
-                {{#with r.grenade}}{{> cprlabGearAct}}{{/with}}
               {{/if}}
             </span>
             <span class="cprlab-gear-upkeep">
