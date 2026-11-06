@@ -6,6 +6,10 @@
      {{#if parent}}data-direct-parent="{{parent}}"{{/if}}
      data-tooltip="{{tip}}"><i class="{{icon}}"></i></a>
 {{/inline}}
+{{!-- Upkeep status icons (Due, Damaged, ...) on a row or tile: the Gear tab's colours; the readout's tags open the dialog. --}}
+{{#*inline "cprlabCbUk"}}
+  <span class="cprlab-uk-col cprlab-cb-uk">{{#each tags as |t|}}<i class="{{t.cls}} {{t.icon}}" data-tooltip="{{t.tip}}"></i>{{/each}}</span>
+{{/inline}}
 {{#*inline "cprlabCbCol"}}
   <div class="cprlab-cb-col" data-side="{{side}}">
     {{#each groups as |g|}}
@@ -18,7 +22,7 @@
             <div class="cprlab-cb-tiles" data-cb-row="{{ch.first}}">
               {{#each ch.rows}}
                 <div class="item cprlab-cb-tile {{#if found}}found{{/if}}" data-item-id="{{id}}" data-cb-id="{{id}}"
-                     tabindex="0" role="button" aria-label="{{label}}" data-tooltip="{{label}}"><img src="{{img}}" alt=""/></div>
+                     tabindex="0" role="button" aria-label="{{label}}" data-tooltip="{{label}}"><img src="{{img}}" alt=""/>{{#if tags.length}}{{> cprlabCbUk tags=tags}}{{/if}}</div>
               {{/each}}
               {{#each ch.free}}<span class="cprlab-cb-tile slot" data-tooltip="{{ch.freeTip}}"></span>{{/each}}
             </div>
@@ -28,6 +32,7 @@
             <div class="item cprlab-cb-row {{#if found}}found{{/if}} {{#if opt}}opt{{/if}}" data-item-id="{{id}}" data-cb-id="{{id}}"
                  tabindex="0" role="button">
               <img src="{{img}}" alt=""/><span class="nm">{{label}}</span>
+              {{#if tags.length}}{{> cprlabCbUk tags=tags}}{{/if}}
               {{#if slots}}<span class="cprlab-slots" data-tooltip="{{slots.tip}}">{{#each slots.pips}}<i class="{{#if full}}full{{/if}}"></i>{{/each}}</span>{{/if}}
               <i class="nub"></i>
             </div>

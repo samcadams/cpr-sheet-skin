@@ -101,6 +101,10 @@
 .app.cprlab .cprlab-cb-row.hot, .app.cprlab .cprlab-cb-row.selected { background: color-mix(in srgb, var(--sk-accent) 16%, transparent); }
 .app.cprlab .cprlab-cb-row.hot .nub { background: var(--sk-accent); }
 .app.cprlab .cprlab-cb-row:focus-visible { outline: 2px solid var(--sk-accent); outline-offset: -2px; }
+/* Upkeep status (Due, Damaged, ...) on the body view's rows and tiles; colours from .cprlab-uk-col (lab-gear.css). */
+.app.cprlab .cprlab-cb-row .cprlab-cb-uk { flex: none; gap: 0.2rem; font-size: 0.75rem; cursor: default; }
+.app.cprlab .cprlab-cb-tile .cprlab-cb-uk { position: absolute; right: 2px; bottom: 1px; gap: 1px; font-size: 0.6rem; cursor: default; }
+.app.cprlab .cprlab-cb-uk > i { cursor: default; }
 
 /* Placement picker banner. */
 .app.cprlab .cprlab-cb-pickbar {
