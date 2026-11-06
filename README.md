@@ -27,6 +27,23 @@ the actor changes.
 - **Active effects bar** above the tabs, with an eye toggle to hide effects you don't need to see.
 - Equipping armor tracks it on every location it covers, on this sheet and on the system sheet.
 
+## Settings
+
+In **Configure Settings → CPR Sheet Skin** there are two buttons:
+
+- **Sheet options** (every user, this browser only): text size, theme, combat dock, Death Save and
+  wound display, the active effects bar, and each tab's view. The same choices as the sheet's own
+  pills and theme switch.
+- **Sheet rules** (GM, whole world):
+  - **Track armor when equipped** (on): equipping armor makes it the tracked armor on every location
+    it covers; taking it off hands over to the best other equipped armor. Also on the system sheet.
+  - **Show cyberpsychosis state label** (on): the strip under HP and Humanity at EMP 2 or below.
+    Humanity keeps its colour when it's off. **Edit state labels** changes the four texts; an
+    empty field uses the built-in one.
+  - **Show Exec Team Slots & Loyalty Tracker** (on): the Team block under the Exec role card.
+  - **Default Hidden Effects** ("Agent, Flashlight"): effect names kept out of the active effects bar
+    until a user shows them. Fashionware is always hidden by default.
+
 ## Optional modules
 
 Everything below is checked at runtime; the sheet works without any of them.
@@ -45,6 +62,7 @@ const api = game.modules.get("cpr-sheet-skin").api;
 api.getPrefs();               // this user's options
 await api.setPref("theme", "gold");
 api.choices("theme");         // the allowed values of an option
+api.settings.groups;          // [{ id, label, hint, menu, keys }]: the settings menus and their setting keys
 ```
 
 ## AI disclosure
