@@ -2,7 +2,7 @@
   "id": "cpr-sheet-skin",
   "title": "CPR Sheet Skin",
   "description": "An opt-in Cyberpunk RED character sheet (one tab bar, a bold header with big numbers, cpr-hq panels) with per-user themes and view options. Extends the system sheet; no system code is changed.",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "license": "LICENSE",
   "authors": [{ "name": "samsamsamsam" }],
   "url": "https://github.com/samcadams/cpr-sheet-skin",
