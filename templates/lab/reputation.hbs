@@ -1,0 +1,51 @@
+{{!-- Life tab, above Lifestyle & Housing: Rep and its ledger (the system's), and the people and factions that know this character (scripts/lab/reputation.js). Context: lab.rep. --}}
+<section class="cprlab-rep">
+  <h3 class="cprlab-rep-head">
+    <span><i class="fa-solid fa-arrow-trend-up"></i> {{localize "CPRSKIN.lab.rep.title"}}</span>
+    <a class="cprlab-pill reputation-open-ledger"><i class="fas fa-note-sticky"></i> {{localize "CPRSKIN.lab.rep.ledger"}}</a>
+    {{#if gm}}<a class="cprlab-pill" data-lab-rep-add><i class="fa-solid fa-plus"></i> {{localize "CPRSKIN.lab.rep.add"}}</a>{{/if}}
+  </h3>
+  <div class="cprlab-rep-body">
+    <article class="cprlab-rep-card">
+      <div class="cprlab-rep-top">
+        <span class="cprlab-rep-value"><b>{{value}}</b><small>/10</small></span>
+        <span class="cprlab-rep-pips" aria-label="{{localize 'CPRSKIN.lab.rep.title'}} {{value}}/10">
+          {{#each pips}}<span class="cprlab-rep-pip {{#if this}}on{{/if}}"></span>{{/each}}
+        </span>
+        <a class="cprlab-rep-facedown rollable" data-roll-type="facedown" data-roll-title="{{localize 'CPR.characterSheet.bottomPane.fight.facedown'}}"
+           data-tooltip="{{facedownTip}}"><i class="far fa-face-angry"></i> {{localize "CPR.characterSheet.bottomPane.fight.facedown"}} <b>{{facedown}}</b></a>
+      </div>
+      <ol class="cprlab-rep-ledger">
+        {{#each ledger}}
+          <li><span>{{sentence}}</span>{{#if reason}}<small>{{reason}}</small>{{/if}}</li>
+        {{else}}
+          <li class="cprlab-rep-empty">{{localize "CPRSKIN.lab.rep.noLedger"}}</li>
+        {{/each}}
+      </ol>
+    </article>
+
+    <div class="cprlab-rep-people">
+      {{#each people}}
+        <a class="cprlab-rep-tile {{#if hidden}}is-hidden{{/if}}" data-lab-rep-entity="{{id}}" data-rep-tier="{{tier}}"
+           data-tooltip="{{name}}">
+          <img class="cprlab-rep-portrait {{kind}}" src="{{img}}" alt=""/>
+          <span class="cprlab-rep-tile-text">
+            <strong>{{name}}</strong>
+            <span class="cprlab-rep-standing" data-rep-tier="{{tier}}">{{label}}</span>
+          </span>
+          {{#if ../gm}}
+            <span class="cprlab-rep-flags">
+              {{#if sync}}<i class="fa-solid fa-link" data-tooltip="{{localize 'CPRSKIN.lab.rep.synced'}}"></i>{{/if}}
+              {{#if hidden}}<i class="fa-solid fa-eye-slash" data-tooltip="{{localize 'CPRSKIN.lab.rep.hiddenTip'}}"></i>{{/if}}
+            </span>
+          {{/if}}
+        </a>
+      {{else}}
+        {{#unless gm}}<p class="cprlab-rep-empty">{{localize "CPRSKIN.lab.rep.nobody"}}</p>{{/unless}}
+      {{/each}}
+      {{#if gm}}
+        <div class="cprlab-rep-drop" data-lab-rep-drop><i class="fa-solid fa-plus"></i> {{localize "CPRSKIN.lab.rep.drop"}}</div>
+      {{/if}}
+    </div>
+  </div>
+</section>

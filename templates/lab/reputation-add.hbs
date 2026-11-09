@@ -1,0 +1,77 @@
+{{!-- GM: add a person or faction to one or more player characters (ReputationAddApp in scripts/lab/reputation.js). --}}
+<div class="cprlab-rep-window cprlab-rep-add-body">
+  <section class="cprlab-rep-section">
+    <h4>{{localize "CPRSKIN.lab.rep.addTo"}}
+      <a class="cprlab-pill" data-action="allPCs">{{localize "CPRSKIN.lab.rep.allPCsToggle"}}</a>
+    </h4>
+    <div class="cprlab-rep-pcs {{#if f.sync}}is-off{{/if}}">
+      {{#each pcs}}
+        <button type="button" class="cprlab-rep-pc {{#if checked}}active{{/if}}" data-action="togglePC" data-actor-id="{{id}}" aria-pressed="{{checked}}" {{#if ../f.sync}}disabled{{/if}}>
+          <img src="{{img}}" alt=""/><span>{{name}}</span>
+        </button>
+      {{/each}}
+    </div>
+    {{#if f.sync}}<p class="cprlab-rep-hint">{{localize "CPRSKIN.lab.rep.syncHint"}}</p>{{/if}}
+  </section>
+
+  <section class="cprlab-rep-section">
+    <h4>{{localize "CPRSKIN.lab.rep.startWith"}} <span class="cprlab-rep-standing big" data-rep-tier="{{tier}}">{{label}}</span></h4>
+    <div class="cprlab-rep-scale">
+      <span class="cprlab-rep-segs">
+        {{#each segs}}
+          <button type="button" class="cprlab-rep-seg {{#if on}}on{{/if}} {{#if current}}current{{/if}}" data-rep-tier="{{tier}}" data-action="setStanding" data-value="{{value}}" aria-label="{{value}}"></button>
+        {{/each}}
+      </span>
+    </div>
+  </section>
+
+  {{!-- Hidden until the GM asks for it (or a drop/"Add to more PCs" points at an entry in it). --}}
+  <section class="cprlab-rep-section cprlab-rep-tracked">
+    <h4>{{localize "CPRSKIN.lab.rep.tracked"}} <small>{{trackedCount}}</small>
+      {{#if showTracked}}<input type="search" data-search value="{{search}}" placeholder="{{localize 'CPRSKIN.lab.rep.search'}}" aria-label="{{localize 'CPRSKIN.lab.rep.search'}}"/>{{/if}}
+      <a class="cprlab-pill" data-action="toggleTracked" aria-expanded="{{showTracked}}">
+        <i class="fa-solid {{#if showTracked}}fa-chevron-up{{else}}fa-chevron-down{{/if}}"></i>
+        {{#if showTracked}}{{localize "CPRSKIN.lab.rep.hideTracked"}}{{else}}{{localize "CPRSKIN.lab.rep.showTracked"}}{{/if}}</a>
+    </h4>
+    {{#if showTracked}}
+    <div class="cprlab-rep-tracked-list">
+      {{#each tracked}}
+        <div class="cprlab-rep-row {{#if focus}}focus{{/if}}" data-entity-id="{{id}}">
+          <img class="cprlab-rep-portrait" src="{{img}}" alt=""/>
+          <span class="cprlab-rep-row-text"><strong>{{name}}</strong><small>{{kindLabel}} · {{scope}}</small></span>
+          {{#if canAdd}}
+            <button type="button" data-action="addExisting"><i class="fa-solid fa-plus"></i> {{localize "CPRSKIN.lab.rep.addSelected"}}</button>
+          {{else}}
+            <span class="cprlab-rep-hint">{{#if sync}}<i class="fa-solid fa-link"></i> {{localize "CPRSKIN.lab.rep.synced"}}{{else}}<i class="fa-solid fa-check"></i> {{localize "CPRSKIN.lab.rep.onAll"}}{{/if}}</span>
+          {{/if}}
+        </div>
+      {{else}}
+        <p class="cprlab-rep-empty">{{localize "CPRSKIN.lab.rep.noneTracked"}}</p>
+      {{/each}}
+    </div>
+    {{/if}}
+  </section>
+
+  <section class="cprlab-rep-section cprlab-rep-new">
+    <h4>{{localize "CPRSKIN.lab.rep.new"}} <small>{{localize "CPRSKIN.lab.rep.dropHint"}}</small></h4>
+    <div class="cprlab-rep-new-grid">
+      <a class="cprlab-rep-portrait-wrap" data-action="pickImage" data-tooltip="{{localize 'CPRSKIN.lab.rep.image'}}"><img class="cprlab-rep-portrait large {{f.kind}}" src="{{img}}" alt=""/></a>
+      <div class="cprlab-rep-new-fields">
+        <div class="cprlab-rep-kind" role="group">
+          <button type="button" data-action="setKind" data-kind="person" class="{{#if (eq f.kind 'person')}}active{{/if}}">{{localize "CPRSKIN.lab.rep.kind.person"}}</button>
+          <button type="button" data-action="setKind" data-kind="faction" class="{{#if (eq f.kind 'faction')}}active{{/if}}">{{localize "CPRSKIN.lab.rep.kind.faction"}}</button>
+        </div>
+        <input type="text" data-form="name" value="{{f.name}}" placeholder="{{localize 'CPRSKIN.lab.rep.name'}}" aria-label="{{localize 'CPRSKIN.lab.rep.name'}}"/>
+        <input type="text" data-form="sub" value="{{f.sub}}" placeholder="{{localize 'CPRSKIN.lab.rep.subHint'}}" aria-label="{{localize 'CPRSKIN.lab.rep.subHint'}}"/>
+        {{#if linked}}<span class="cprlab-rep-hint"><i class="fa-solid fa-link"></i> {{linked}} <a data-action="clearLink" data-tooltip="{{localize 'CPRSKIN.lab.rep.unlink'}}"><i class="fa-solid fa-xmark"></i></a></span>{{/if}}
+        <label><input type="checkbox" data-form="sync" {{checked f.sync}}/> {{localize "CPRSKIN.lab.rep.sync"}}</label>
+      </div>
+    </div>
+  </section>
+
+  {{!-- "Shown to players" also applies to entries added from Previously tracked. --}}
+  <footer class="cprlab-rep-footer">
+    <label class="cprlab-rep-shown"><input type="checkbox" data-form="shown" {{checked f.shown}}/> {{localize "CPRSKIN.lab.rep.shownPlayers"}}</label>
+    <button type="button" class="primary" data-action="create" {{#unless canCreate}}disabled{{/unless}}><i class="fa-solid fa-plus"></i> {{localize "CPRSKIN.lab.rep.create"}}</button>
+  </footer>
+</div>

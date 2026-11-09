@@ -15,6 +15,7 @@ import { fightContext, activateFight } from "./fight.js";
 import { activateGrenades } from "./grenades.js";
 import { cyberBodyContext, activateCyberBody } from "./cyber-body/view.js";
 import { execTeamContext, activateExecTeam } from "./exec-team.js";
+import { reputationContext, activateReputation } from "./reputation.js";
 
 const MODULE_ID = "cpr-sheet-skin";
 const TEMPLATES = `modules/${MODULE_ID}/templates/lab`;
@@ -123,6 +124,7 @@ export default class CPRLabSheet extends CPRCharacterActorSheet {
       injuries: this._labInjuries(),
       effects: prefs.effectsBar === "on" ? this._labEffects() : [],
       lifepath: this._labLifepath(data),
+      rep: reputationContext(this),
       hq,
       tabs: this._labTabs(hq)
     };
@@ -768,12 +770,23 @@ export default class CPRLabSheet extends CPRCharacterActorSheet {
       });
     }
     root.querySelector("[data-lab-therapy]")?.addEventListener("click", event => this._labTherapy(event));
+    // REP chip: opens the Reputation block on the Life tab (its Facedown button still rolls).
+    const repChip = root.querySelector("[data-lab-rep-chip]");
+    const openRep = event => {
+      if (event.target.closest(".rollable")) return;
+      event.preventDefault();
+      this.activateTab("lifepath");
+      root.querySelector(".cprlab-rep")?.scrollIntoView({ block: "start", behavior: "smooth" });
+    };
+    repChip?.addEventListener("click", openRep);
+    repChip?.addEventListener("keydown", event => { if (["Enter", " "].includes(event.key)) openRep(event); });
 
     activateGear(this, root);
     activateFight(this, root);
     activateGrenades(this, root);
     activateCyberBody(this, root);
     activateExecTeam(this, root);
+    activateReputation(this, root);
 
     // cpr-hq panels.
     const panels = game.modules.get("cpr-hq")?.api?.panels;

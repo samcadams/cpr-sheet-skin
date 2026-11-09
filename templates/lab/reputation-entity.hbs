@@ -1,0 +1,109 @@
+{{!-- One person or faction toward one character (ReputationEntityApp in scripts/lab/reputation.js). GM: everything editable; players: read only. --}}
+<div class="cprlab-rep-window">
+  {{#if missing}}
+    <p class="cprlab-rep-empty">{{localize "CPRSKIN.lab.rep.gone"}}</p>
+  {{else}}
+  <header class="cprlab-rep-ident" data-rep-tier="{{tier}}">
+    {{#if gm}}
+      <a class="cprlab-rep-portrait-wrap" data-action="pickImage" data-tooltip="{{localize 'CPRSKIN.lab.rep.image'}}"><img class="cprlab-rep-portrait large {{e.kind}}" src="{{img}}" alt=""/></a>
+    {{else}}
+      <img class="cprlab-rep-portrait large {{e.kind}}" src="{{img}}" alt=""/>
+    {{/if}}
+    <div class="cprlab-rep-ident-text">
+      {{#if gm}}
+        <input class="cprlab-rep-name" type="text" data-field="name" value="{{e.name}}" aria-label="{{localize 'CPRSKIN.lab.rep.name'}}"/>
+        <div class="cprlab-rep-kind" role="group">
+          <button type="button" data-action="setKind" data-kind="person" class="{{#if (eq e.kind 'person')}}active{{/if}}">{{localize "CPRSKIN.lab.rep.kind.person"}}</button>
+          <button type="button" data-action="setKind" data-kind="faction" class="{{#if (eq e.kind 'faction')}}active{{/if}}">{{localize "CPRSKIN.lab.rep.kind.faction"}}</button>
+        </div>
+        <input class="cprlab-rep-sub" type="text" data-field="sub" value="{{e.sub}}" placeholder="{{localize 'CPRSKIN.lab.rep.subHint'}}"/>
+      {{else}}
+        <strong class="cprlab-rep-name">{{e.name}}</strong>
+        <span class="cprlab-rep-badge">{{kindLabel}}</span>
+        {{#if e.sub}}<small>{{e.sub}}</small>{{/if}}
+      {{/if}}
+      {{#if linked}}
+        {{#if linked.canOpen}}<a class="cprlab-rep-linked" data-action="openLinked"><i class="fa-solid fa-arrow-up-right-from-square"></i> {{linked.name}}</a>{{/if}}
+      {{/if}}
+    </div>
+  </header>
+
+  <section class="cprlab-rep-section">
+    <h4>
+      {{#if e.sync}}{{localize "CPRSKIN.lab.rep.standingAll"}}{{else}}{{localize "CPRSKIN.lab.rep.standingToward" name=actorName}}{{/if}}
+      <span class="cprlab-rep-standing big" data-rep-tier="{{tier}}">{{label}}</span>
+    </h4>
+    <div class="cprlab-rep-scale">
+      {{#if gm}}<button type="button" class="cprlab-rep-step" data-action="step" data-step="-1" {{#unless canStep.down}}disabled{{/unless}} aria-label="{{localize 'CPRSKIN.lab.rep.lower'}}">−</button>{{/if}}
+      <span class="cprlab-rep-segs">
+        {{#each segs}}
+          {{#if ../gm}}
+            <button type="button" class="cprlab-rep-seg {{#if on}}on{{/if}} {{#if current}}current{{/if}}" data-rep-tier="{{tier}}" data-action="setStanding" data-value="{{value}}" aria-label="{{value}}"></button>
+          {{else}}
+            <span class="cprlab-rep-seg {{#if on}}on{{/if}} {{#if current}}current{{/if}}" data-rep-tier="{{tier}}"></span>
+          {{/if}}
+        {{/each}}
+      </span>
+      {{#if gm}}<button type="button" class="cprlab-rep-step" data-action="step" data-step="1" {{#unless canStep.up}}disabled{{/unless}} aria-label="{{localize 'CPRSKIN.lab.rep.raise'}}">+</button>{{/if}}
+    </div>
+    {{#if gm}}
+      <div class="cprlab-rep-toggles">
+        <label><input type="checkbox" data-action="toggleSync" {{checked e.sync}}/> {{localize "CPRSKIN.lab.rep.sync"}}</label>
+        <label><input type="checkbox" data-action="toggleHidden" {{checked (not hidden)}}/> {{#if e.sync}}{{localize "CPRSKIN.lab.rep.shownAll"}}{{else}}{{localize "CPRSKIN.lab.rep.shownTo" name=actorName}}{{/if}}</label>
+      </div>
+    {{/if}}
+  </section>
+
+  {{#if gm}}
+    {{#unless e.sync}}
+      <section class="cprlab-rep-section">
+        <h4>{{localize "CPRSKIN.lab.rep.otherPCs"}}
+          {{#if missingPCs}}<a class="cprlab-pill" data-action="addOthers"><i class="fa-solid fa-plus"></i> {{localize "CPRSKIN.lab.rep.addOthers"}}</a>{{/if}}
+        </h4>
+        {{#each others}}
+          <div class="cprlab-rep-other" data-actor-id="{{id}}">
+            <span class="cprlab-rep-other-name">{{name}}</span>
+            <button type="button" class="cprlab-rep-step" data-action="setOther" data-step="-1" aria-label="{{localize 'CPRSKIN.lab.rep.lower'}}">−</button>
+            <span class="cprlab-rep-standing" data-rep-tier="{{tier}}">{{label}}</span>
+            <button type="button" class="cprlab-rep-step" data-action="setOther" data-step="1" aria-label="{{localize 'CPRSKIN.lab.rep.raise'}}">+</button>
+            <a class="cprlab-rep-eye {{#if hidden}}off{{/if}}" data-action="toggleHidden"
+               data-tooltip="{{#if hidden}}{{localize 'CPRSKIN.lab.rep.hiddenTip'}}{{else}}{{localize 'CPRSKIN.lab.rep.shownTip'}}{{/if}}">
+              <i class="fa-solid {{#if hidden}}fa-eye-slash{{else}}fa-eye{{/if}}"></i></a>
+          </div>
+        {{else}}
+          <p class="cprlab-rep-empty">{{localize "CPRSKIN.lab.rep.onlyHere"}}</p>
+        {{/each}}
+      </section>
+    {{/unless}}
+  {{/if}}
+
+  <section class="cprlab-rep-section">
+    <h4>{{localize "CPRSKIN.lab.rep.note"}}</h4>
+    {{#if gm}}
+      <textarea data-field="note" rows="2" placeholder="{{localize 'CPRSKIN.lab.rep.noteHint'}}">{{e.note}}</textarea>
+      <h4 class="gm-only">{{localize "CPRSKIN.lab.rep.gmNote"}}</h4>
+      <textarea class="gm-only" data-field="gmNote" rows="2">{{e.gmNote}}</textarea>
+    {{else}}
+      <p class="cprlab-rep-note">{{#if e.note}}{{e.note}}{{else}}—{{/if}}</p>
+    {{/if}}
+  </section>
+
+  {{#if log.length}}
+    <section class="cprlab-rep-section">
+      <h4>{{localize "CPRSKIN.lab.rep.history"}}</h4>
+      <ol class="cprlab-rep-log">
+        {{#each log}}
+          <li><time>{{date}}</time> <b>{{who}}</b> {{from}} → <span class="cprlab-rep-standing" data-rep-tier="{{toTier}}">{{to}}</span></li>
+        {{/each}}
+      </ol>
+    </section>
+  {{/if}}
+
+  {{#if gm}}
+    <footer class="cprlab-rep-footer">
+      {{#unless e.sync}}<button type="button" data-action="removeHere"><i class="fa-solid fa-user-minus"></i> {{localize "CPRSKIN.lab.rep.removeHere" name=actorName}}</button>{{/unless}}
+      <button type="button" class="danger" data-action="deleteAll"><i class="fa-solid fa-trash"></i> {{localize "CPRSKIN.lab.rep.deleteAll"}}</button>
+    </footer>
+  {{/if}}
+  {{/if}}
+</div>

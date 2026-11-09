@@ -55,6 +55,7 @@
         {{> "modules/cpr-sheet-skin/templates/lab/cyber.hbs"}}
       </div>
       <div class="tab" data-group="primary" data-tab="lifepath">
+        {{> "modules/cpr-sheet-skin/templates/lab/reputation.hbs" lab.rep}}
         {{#if lab.hq.housing}}
           <div class="application cpr-hq cprlab-hq cprlab-hq-housing" data-lab-hq="housing">
             <div class="window-content"><div class="downtime-app">{{> (lookup lab.hq.housing "partial") lab.hq.housing.context}}</div></div>

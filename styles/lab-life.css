@@ -304,6 +304,23 @@
 .app.cprlab .cprlab-hq .window-content .ls-card + .ls-card {
   margin-top: 0.4rem;
 }
+/* Lifestyle write-ins (GM name/price, pet names, Trauma sponsor): framed like
+   the selects next to them, so they read as editable on the card's surface. */
+.app.cprlab .cprlab-hq .window-content .ls-card :is(input[type="text"], input[type="number"]):not([readonly]) {
+  background: var(--sk-panel-2);
+  border-color: var(--sk-line);
+}
+.app.cprlab .cprlab-hq .window-content .ls-card :is(input[type="text"], input[type="number"]):not([readonly]):is(:hover, :focus) {
+  border-color: var(--sk-accent);
+}
+.app.cprlab .cprlab-hq .window-content .ls-card input[readonly]:is(:hover, :focus) {
+  background: transparent;
+  border-color: transparent;
+}
+/* The "Template" button, in the sheet's colours. */
+.app.cprlab .cprlab-hq .window-content .ls-pick-btn {
+  color: var(--sk-accent);
+}
 .app.cprlab .cprlab-hq .window-content .ls-card > header {
   margin-bottom: 0.4rem;
   padding-bottom: 0.35rem;
@@ -321,10 +338,16 @@
   font-variant-numeric: tabular-nums;
 }
 .app.cprlab .cprlab-hq .window-content .ls-grid {
-  gap: 0.8rem;
+  column-gap: 0.8rem;
 }
-.app.cprlab .cprlab-hq .window-content .ls-col {
-  gap: 0.6rem;
+.app.cprlab .cprlab-hq .window-content .ls-grid > .ls-block {
+  margin-bottom: 0.6rem;
+}
+/* Pet tiles: the raised surface of the sheet's inner panels. */
+.app.cprlab .cprlab-hq .window-content .ls-pet {
+  border-color: var(--sk-line);
+  border-radius: var(--sk-radius);
+  background: var(--sk-panel-2);
 }
 /* Block titles (Housing, Lifestyle, Trauma Team) read like the card labels. */
 .app.cprlab .cprlab-hq .window-content .ls-block h4 {

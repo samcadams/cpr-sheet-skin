@@ -20,12 +20,12 @@
         <span>{{cprNumberFormat actor.system.improvementPoints.value}}</span>
         <a class="improvement-points-open-ledger" data-tooltip="{{localize 'CPR.ledger.ledgerOpen'}}"><i class="fas fa-note-sticky"></i></a>
       </div>
-      <div class="cprlab-chip">
+      {{!-- The whole chip opens the Reputation block on the Life tab (the ledger button lives there); Facedown still rolls. --}}
+      <div class="cprlab-chip cprlab-rep-chip" data-lab-rep-chip role="button" tabindex="0" data-tooltip="{{localize 'CPRSKIN.lab.rep.chipTip'}}">
         <label>{{localize "CPR.characterSheet.bottomPane.reputation"}}</label>
         <span>{{actor.system.reputation.value}}</span>
         <a class="rollable" data-roll-type="facedown" data-roll-title="{{localize 'CPR.characterSheet.bottomPane.fight.facedown'}}"
            data-tooltip="{{localize 'CPR.characterSheet.bottomPane.fight.facedown'}}"><i class="far fa-face-angry"></i></a>
-        <a class="reputation-open-ledger" data-tooltip="{{localize 'CPR.ledger.ledgerOpen'}}"><i class="fas fa-note-sticky"></i></a>
       </div>
       <div class="cprlab-chip">
         <label>{{localize "CPR.characterSheet.rightPane.eurobucks.eurobucks"}}</label>

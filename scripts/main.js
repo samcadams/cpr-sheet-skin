@@ -9,6 +9,7 @@
 
 import { registerMenus, settingsGroups } from "./settings.js";
 import { themeRollDialog } from "./roll-dialog.js";
+import { registerReputationSetting } from "./lab/reputation.js";
 
 const MODULE_ID = "cpr-sheet-skin";
 const SETTING = "prefs";
@@ -140,6 +141,8 @@ Hooks.once("init", async () => {
   world("humanityLabels", Object, {});
   world("execTeam", Boolean, true);
   world("hiddenEffects", String, "Agent, Flashlight");
+  // People and factions on the Life tab (GM-edited; every sheet redraws when it changes).
+  registerReputationSetting(applyToOpenSheets);
   registerMenus();
 
   game.modules.get(MODULE_ID).api = { getPrefs, setPref, choices, getUI, setUI };
@@ -157,7 +160,7 @@ Hooks.once("init", async () => {
       label: "CPRSKIN.lab.sheetLabel",
       makeDefault: false,
     });
-    await loadTemplates(["header", "skills", "role", "fight", "lifepath", "dock", "gear", "cyber", "cyber-body", "effects"]
+    await loadTemplates(["header", "skills", "role", "fight", "lifepath", "reputation", "dock", "gear", "cyber", "cyber-body", "effects"]
       .map((name) => `modules/${MODULE_ID}/templates/lab/${name}.hbs`));
   } catch (err) {
     console.error(`${MODULE_ID} | sheet unavailable`, err);

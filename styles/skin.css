@@ -3,6 +3,7 @@
 @import url("lab-fight.css");
 @import url("lab-life.css");
 @import url("lab-cyber.css");
+@import url("lab-reputation.css");
 @import url("roll-dialog.css");
 
 /*
@@ -17,8 +18,8 @@
 
 /* ------------------------------------------------------------- Palettes */
 
-/* Matches cpr-hq: charcoal panels, hairlines, cyan accent. */
-.app.cprskin-theme-hq {
+/* Matches cpr-hq: charcoal panels, hairlines, cyan accent. (.application: the Reputation windows are AppV2.) */
+:is(.app, .application).cprskin-theme-hq {
   --sk-bg: #0f1113;
   --sk-panel: #171a1d;
   --sk-panel-2: #1e2226;
@@ -42,7 +43,7 @@
 }
 
 /* Demiplane-style: black and gold, big numbers, bold skill names. */
-.app.cprskin-theme-gold {
+:is(.app, .application).cprskin-theme-gold {
   --sk-bg: #0c0c0c;
   --sk-panel: #151515;
   --sk-panel-2: #1c1c1c;
@@ -65,8 +66,8 @@
   color-scheme: dark;
 }
 
-/* Tokens -> system variables, shared by every theme. */
-.app.cprskin {
+/* Tokens -> system variables, shared by every theme (.application: the Reputation windows). */
+:is(.app, .application).cprskin {
   --cpr-background-window: var(--sk-bg);
   --cpr-background-border: var(--sk-frame);
   --cpr-background-box: var(--sk-panel);
