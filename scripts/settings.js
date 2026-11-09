@@ -6,7 +6,7 @@
 const MODULE_ID = "cpr-sheet-skin";
 const TEMPLATES = `modules/${MODULE_ID}/templates/settings`;
 
-const PREF_KEYS = ["scale", "theme", "dock", "vitals", "effectsBar", "skills", "skillGroup", "hideZero", "pinned", "role", "cyberView", "cyberItems"];
+const PREF_KEYS = ["scale", "theme", "dock", "vitals", "effectsBar", "skills", "skillGroup", "hideZero", "pinned", "role", "cyberView", "cyberItems", "rollDialog"];
 const RULE_KEYS = ["autoTrackArmor", "humanityStrip", "execTeam", "hiddenEffects"];
 const STATES = ["warn", "danger", "psycho", "extreme"];
 

@@ -33,7 +33,9 @@ In **Configure Settings → CPR Sheet Skin** there are two buttons:
 
 - **Sheet options** (every user, this browser only): text size, theme, combat dock, Death Save and
   wound display, the active effects bar, and each tab's view. The same choices as the sheet's own
-  pills and theme switch.
+  pills and theme switch. **Theme Attack Check** (off by default) also shows the system's roll
+  dialog for stat, skill and attack rolls in your sheet theme, with the sum (stat + skill + mods +
+  Luck) over a d10 **Roll +N** button.
 - **Sheet rules** (GM, whole world):
   - **Track armor when equipped** (on): equipping armor makes it the tracked armor on every location
     it covers; taking it off hands over to the best other equipped armor. Also on the system sheet.

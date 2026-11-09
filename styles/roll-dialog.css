@@ -1,0 +1,221 @@
+/*
+ * "Theme Attack Check": the system's roll dialog in the sheet theme
+ * (scripts/roll-dialog.js adds .cprskin-roll and the theme class). Colours
+ * come only from the --sk-* palette, so HQ and Gold both work.
+ */
+
+.app.cprskin-roll .window-header {
+  background: var(--sk-panel-2);
+  color: var(--sk-fg);
+  border-bottom: 1px solid var(--sk-line);
+}
+.app.cprskin-roll .window-header a:hover {
+  color: var(--sk-accent);
+  text-shadow: none;
+}
+.app.cprskin-roll .window-content {
+  background: var(--sk-bg);
+  color: var(--sk-fg);
+  padding: 0.75rem 0.875rem;
+}
+.app.cprskin-roll .dialog-sheet hr {
+  border: 0;
+  border-top: 1px solid var(--sk-line);
+  margin: 0.625rem 0;
+}
+
+/* Title, with an accent fade under it instead of the first rule. */
+.app.cprskin-roll .dialog-header {
+  padding-top: 0;
+}
+.app.cprskin-roll .dialog-header .text-normal {
+  font-size: 1.06rem;
+  line-height: 1.5rem;
+}
+.app.cprskin-roll .dialog-header .text-normal b {
+  color: var(--sk-accent);
+  font-weight: 600;
+}
+.app.cprskin-roll .dialog-header + hr {
+  height: 1px;
+  border: 0;
+  background: linear-gradient(90deg, transparent, var(--sk-accent), transparent);
+}
+
+/* Stat / skill / criticals / Luck / mods box. */
+.app.cprskin-roll .dialog-list {
+  border: 1px solid var(--sk-line);
+  border-radius: 4px;
+  background: var(--sk-panel);
+}
+.app.cprskin-roll .dialog-list li.dialog-item {
+  align-items: center;
+  min-height: 1.875rem;
+  padding: 0 0.625rem;
+  background-color: var(--sk-panel);
+}
+.app.cprskin-roll .dialog-list li.dialog-item:nth-child(even) {
+  background-color: var(--sk-row-alt);
+}
+.app.cprskin-roll .dialog-list .dialog-item-input input[type="number"],
+.app.cprskin-roll .dialog-list .dialog-item-input input[type="text"] {
+  width: 4.5rem;
+  height: 1.5rem;
+  border: 1px solid transparent;
+  border-radius: 3px;
+  background: transparent;
+  color: var(--sk-fg);
+  font-family: var(--cpr-font-hero, inherit);
+  font-weight: 500;
+  text-align: right;
+  box-shadow: none;
+}
+.app.cprskin-roll .dialog-list .dialog-item-input input:hover {
+  border-color: var(--sk-line);
+}
+.app.cprskin-roll .dialog-list .dialog-item-input input:focus {
+  border-color: var(--sk-accent);
+  background: var(--sk-bg);
+  box-shadow: none;
+  outline: none;
+}
+.app.cprskin-roll .dialog-list .dialog-item-input input::placeholder {
+  color: var(--sk-muted);
+  font-family: inherit;
+  font-weight: 400;
+}
+.app.cprskin-roll .dialog-list .dialog-item-input input[type="checkbox"] {
+  accent-color: var(--sk-accent);
+  margin-right: 0.375rem;
+}
+.app.cprskin-roll .dialog-list .dialog-item-input select {
+  background: var(--sk-panel-2);
+  color: var(--sk-fg);
+  border: 1px solid var(--sk-line);
+}
+.app.cprskin-roll .dialog-list .total-mods {
+  background-color: var(--sk-panel-2) !important;
+  border-top: 1px solid var(--sk-line);
+  border-width: 1px 0 0;
+  border-style: solid;
+}
+.app.cprskin-roll .total-mods .total-mod-value {
+  font-family: var(--cpr-font-hero, inherit);
+  padding-right: 0.375rem;
+}
+
+/* "Hide/Show … Modifiers" toggles. */
+.app.cprskin-roll .toggle-show-mods {
+  color: var(--sk-fg);
+}
+.app.cprskin-roll .toggle-show-mods:hover {
+  color: var(--sk-accent);
+  text-shadow: none;
+}
+.app.cprskin-roll .toggle-show-mods i {
+  color: var(--sk-accent);
+}
+
+/* Situational and core modifier rows. */
+.app.cprskin-roll .situational-mods {
+  padding: 0;
+}
+.app.cprskin-roll .situational-mods li {
+  align-items: center;
+  min-height: 2rem;
+  margin: 0 0 0.25rem;
+  padding: 0 0.625rem;
+  border: 1px solid var(--sk-line);
+  border-radius: 3px;
+  background: var(--sk-panel);
+  color: var(--sk-fg);
+}
+.app.cprskin-roll .situational-mods li:hover {
+  border-color: var(--sk-accent);
+}
+.app.cprskin-roll .toggle-situational-mod:hover {
+  text-shadow: none;
+}
+.app.cprskin-roll .situational-mods li.mod-selected {
+  background: var(--sk-accent-2);
+  border-color: var(--sk-accent);
+}
+.app.cprskin-roll .situational-mod-value {
+  font-family: var(--cpr-font-hero, inherit);
+  font-weight: 500;
+}
+.app.cprskin-roll .situational-mod-input i {
+  color: var(--sk-muted);
+}
+.app.cprskin-roll .mod-selected .situational-mod-input i {
+  color: var(--sk-accent);
+}
+.app.cprskin-roll .cprskin-pos {
+  color: var(--sk-good);
+}
+.app.cprskin-roll .cprskin-neg {
+  color: var(--sk-alert);
+}
+
+/* Footer: the sum over the Roll button. */
+.app.cprskin-roll .dialog-footer {
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  padding: 0;
+  background: var(--sk-bg);
+}
+.app.cprskin-roll .cprskin-roll-math {
+  flex: 0 0 100%;
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.625rem;
+  line-height: 1.125rem;
+}
+.app.cprskin-roll .cprskin-roll-math span {
+  font-size: 0.75rem;
+  color: var(--sk-muted);
+}
+.app.cprskin-roll .cprskin-roll-math b {
+  font-family: var(--cpr-font-hero, inherit);
+  font-size: 0.94rem;
+  white-space: nowrap;
+}
+.app.cprskin-roll .cprskin-roll-math em {
+  font-style: normal;
+  color: var(--sk-accent);
+}
+.app.cprskin-roll .cpr-dialog-button {
+  height: 2.75rem;
+  border: 1px solid var(--sk-line);
+  border-radius: 4px;
+  background: var(--sk-panel-2);
+  color: var(--sk-fg);
+  box-shadow: none;
+}
+.app.cprskin-roll .cpr-dialog-button:hover {
+  border-color: var(--sk-accent);
+  color: var(--sk-accent);
+  background: var(--sk-panel-2);
+}
+.app.cprskin-roll .cpr-dialog-button.cprskin-roll-go {
+  flex: 2;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.55rem;
+  border: 0;
+  background: var(--sk-accent);
+  color: var(--sk-accent-fg);
+  font-family: var(--cpr-font-hero, inherit);
+  font-size: 1.19rem;
+  font-weight: 700;
+}
+.app.cprskin-roll .cpr-dialog-button.cprskin-roll-go i {
+  font-size: 1rem;
+  opacity: 0.8;
+}
+.app.cprskin-roll .cpr-dialog-button.cprskin-roll-go:hover {
+  filter: brightness(1.12);
+  color: var(--sk-accent-fg);
+}

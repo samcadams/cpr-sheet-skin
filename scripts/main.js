@@ -8,6 +8,7 @@
  */
 
 import { registerMenus, settingsGroups } from "./settings.js";
+import { themeRollDialog } from "./roll-dialog.js";
 
 const MODULE_ID = "cpr-sheet-skin";
 const SETTING = "prefs";
@@ -27,13 +28,14 @@ const OPTIONS = {
   effectsBar: ["on", "off"],
   cyberView: ["body", "list"],
   cyberItems: ["rows", "tiles"],
+  rollDialog: ["system", "themed"],
 };
 
 const DEFAULTS = {
   theme: "hq", scale: "100",
   skills: "dice", skillGroup: "category", hideZero: "show", pinned: "top",
   role: "cards", dock: "right", vitals: "compact", effectsBar: "on",
-  cyberView: "body", cyberItems: "rows",
+  cyberView: "body", cyberItems: "rows", rollDialog: "system",
 };
 
 /** The sheet's class, once registered (see init). */
@@ -198,4 +200,10 @@ Hooks.on("createItem", (item, _options, userId) => {
 
 Hooks.on("renderActorSheet", (app) => {
   if (isSkinSheet(app)) applySkin(app);
+});
+
+// "Theme Attack Check" (Sheet options): the system's roll dialog in this user's sheet theme.
+Hooks.on("renderCPRRollDialog", (app, _html, data) => {
+  const prefs = getPrefs();
+  if (prefs.rollDialog === "themed") themeRollDialog(app, data, prefs.theme);
 });
