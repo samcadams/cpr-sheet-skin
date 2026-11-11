@@ -9,7 +9,7 @@ the system's, and no system code is changed.
 ## Using it
 
 The sheet is opt-in per actor. Open a character, click **Sheet** in the window header (Sheet
-Configuration) and pick **Cyberpunk RED Sheet (CPR Sheet Skin)**. Switch back the same way; nothing on
+Configuration) and pick **Sam's CPR Sheet**. Switch back the same way; nothing on
 the actor changes.
 
 - **Tabs:** Skills, Role, Fight, Gear, Cyber, Life, Effects, plus Downtime and Workshop with CPR HQ.
