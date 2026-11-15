@@ -8,7 +8,7 @@
  */
 
 import { registerMenus, settingsGroups } from "./settings.js";
-import { themeRollDialog } from "./roll-dialog.js";
+import { isSheetRoll, themeRollDialog } from "./roll-dialog.js";
 import { registerReputationSetting } from "./lab/reputation.js";
 
 const MODULE_ID = "cpr-sheet-skin";
@@ -205,8 +205,9 @@ Hooks.on("renderActorSheet", (app) => {
   if (isSkinSheet(app)) applySkin(app);
 });
 
-// "Theme Attack Check" (Sheet options): the system's roll dialog in this user's sheet theme.
+// "Theme Attack Check" (Sheet options): the system's roll dialogs in this user's sheet theme,
+// for rolls started from the skin sheet. Rolls from macros, chat cards or other sheets keep the system look.
 Hooks.on("renderCPRRollDialog", (app, _html, data) => {
   const prefs = getPrefs();
-  if (prefs.rollDialog === "themed") themeRollDialog(app, data, prefs.theme);
+  if (isSheetRoll(app) && prefs.rollDialog === "themed") themeRollDialog(app, data, prefs.theme);
 });

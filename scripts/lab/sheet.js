@@ -16,6 +16,7 @@ import { activateGrenades } from "./grenades.js";
 import { cyberBodyContext, activateCyberBody } from "./cyber-body/view.js";
 import { execTeamContext, activateExecTeam } from "./exec-team.js";
 import { reputationContext, activateReputation } from "./reputation.js";
+import { fromSheet } from "../roll-dialog.js";
 
 const MODULE_ID = "cpr-sheet-skin";
 const TEMPLATES = `modules/${MODULE_ID}/templates/lab`;
@@ -100,6 +101,11 @@ export default class CPRLabSheet extends CPRCharacterActorSheet {
   /** The skin module's per-user options (set from the Skin dialog). */
   get labPrefs() {
     return game.modules.get(MODULE_ID).api.getPrefs();
+  }
+
+  /** The system's roll dispatcher; the roll dialog it opens takes the sheet theme ("Theme Attack Check"). */
+  _onRoll(event) {
+    return fromSheet(this, () => super._onRoll(event));
   }
 
   async getData() {
